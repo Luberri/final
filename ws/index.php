@@ -12,6 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
+// Route d'accueil personnalisée
+// Flight::route('GET /localhost/final/ioty', function() {
+//     echo '<h1>coucou</h1>';
+//     echo '<a href="/ws/etudiants">Aller vers le CRUD des étudiants</a>';
+// });
+
 require 'routes/etudiant_routes.php';
 
 Flight::start();

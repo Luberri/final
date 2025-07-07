@@ -9,11 +9,26 @@
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #f2f2f2; }
+    #form-fond { display: none; margin-top: 30px; border: 1px solid #eee; padding: 15px; background: #fafafa; }
+    #fond-success { color: green; }
+    #fond-error { color: red; }
   </style>
 </head>
 <body>
 
   <h1>Gestion des étudiants</h1>
+
+  <a href="ajout_fond.html">Ajouter un fond à l'établissement (admin)</a>
+
+  <div id="form-fond">
+    <h2>Ajout de fond</h2>
+    <input type="number" id="fond-montant" placeholder="Montant" step="0.01" min="0">
+    <input type="text" id="fond-detail" placeholder="Détail">
+    <button onclick="ajouterFond()">Ajouter le fond</button>
+    <span id="fond-success"></span>
+    <span id="fond-error"></span>
+    <button onclick="cacherFormFond()">Annuler</button>
+  </div>
 
   <div>
     <input type="hidden" id="id">
@@ -114,6 +129,40 @@
       document.getElementById("prenom").value = "";
       document.getElementById("email").value = "";
       document.getElementById("age").value = "";
+    }
+
+    function afficherFormFond() {
+      document.getElementById('form-fond').style.display = 'block';
+      document.getElementById('fond-success').textContent = '';
+      document.getElementById('fond-error').textContent = '';
+    }
+    function cacherFormFond() {
+      document.getElementById('form-fond').style.display = 'none';
+    }
+    function ajouterFond() {
+      const montant = document.getElementById('fond-montant').value;
+      const detail = document.getElementById('fond-detail').value;
+      fetch(apiBase + '/fonds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ montant, detail })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if(res.success) {
+          document.getElementById('fond-success').textContent = 'Fond ajouté !';
+          document.getElementById('fond-error').textContent = '';
+          document.getElementById('fond-montant').value = '';
+          document.getElementById('fond-detail').value = '';
+        } else {
+          document.getElementById('fond-error').textContent = res.error || 'Erreur.';
+          document.getElementById('fond-success').textContent = '';
+        }
+      })
+      .catch(() => {
+        document.getElementById('fond-error').textContent = 'Erreur réseau.';
+        document.getElementById('fond-success').textContent = '';
+      });
     }
 
     chargerEtudiants();

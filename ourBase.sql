@@ -48,10 +48,10 @@ CREATE TABLE fond_detail (
 -- Table FondHistorique
 CREATE TABLE fond_historique (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    fond_id INT,
+    fond_detail_id INT,
     montant DECIMAL(12,2),
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fond_id) REFERENCES fond(id)
+    FOREIGN KEY (fond_detail_id) REFERENCES fond_detail(id)
 );
 
 -- Table TypeRemboursement

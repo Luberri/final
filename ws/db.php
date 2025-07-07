@@ -13,3 +13,6 @@ function getDB() {
         die(json_encode(['error' => $e->getMessage()]));
     }
 }
+
+// Expose $db global
+$db = getDB();
