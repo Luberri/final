@@ -1,3 +1,5 @@
+CREATE DATABASE tp_flight;
+use tp_flight;
 CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100),
