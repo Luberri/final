@@ -93,6 +93,7 @@
         <div class="menu">
             <a href="#" class="menu-item" onclick="loadEtudiants()">Gestion des Étudiants</a>
             <a href="#" class="menu-item" onclick="loadPrets()">Gestion des Prêts</a>
+            <a href="#" class="menu-item" onclick="insertPret()">Ajout Pret</a>
             <a href="#" class="menu-item" onclick="loadClients()">Gestion des Clients</a>
             <a href="interets" class="menu-item">Intérêts Gagnés</a>
             <a href="#" class="menu-item" onclick="loadStatistiques()">Statistiques</a>
@@ -167,6 +168,28 @@
                 })
                 .catch(() => {
                     document.getElementById('content').innerHTML = '<p>Erreur lors du chargement du module d\'ajout de fond.</p>';
+                });
+        }
+
+        function insertPret() {
+            fetch('ajout_pret.php')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('content').innerHTML = html;
+                    // Exécuter les scripts inclus dans le HTML injecté
+                    const scripts = document.getElementById('content').querySelectorAll('script');
+                    scripts.forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        document.body.appendChild(newScript);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById('content').innerHTML = '<p>Erreur lors du chargement du module d\'ajout de prêt.</p>';
                 });
         }
 
