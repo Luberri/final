@@ -1,51 +1,57 @@
 <?php
-require_once __DIR__ . '/../models/Pret.php';
+require_once __DIR__ . '/../db.php';
 
-class PretController {
+class Pret {
     public static function getAll() {
-        $prets = Pret::getAll();
-        Flight::json($prets);
+        $db = getDB();
+        $stmt = $db->query("SELECT * FROM pret");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function getById($id) {
-        $pret = Pret::getById($id);
-        if ($pret) {
-            Flight::json($pret);
-        } else {
-            Flight::json(['error' => 'Prêt non trouvé'], 404);
+        $db = getDB();
+        $stmt = $db->prepare("SELECT * FROM pret WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public static function create($data) {
+        $db = getDB();
+        try {
+            $stmt = $db->prepare("INSERT INTO pret (client_id, montant, duree, type_remboursement_id, type_pret_id, status_pret_id) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $data->client_id,
+                $data->montant,
+                $data->duree,
+                $data->type_remboursement_id,
+                $data->type_pret_id,
+                $data->status_pret_id
+            ]);
+            return $db->lastInsertId();
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+            exit;
         }
     }
 
-    public static function create() {
-        $data = Flight::request()->data->getData();
-        // Validation simple (à améliorer selon besoin)
-        $required = ['client_id','montant','duree','type_remboursement_id','type_pret_id','status_pret_id'];
-        foreach ($required as $field) {
-            if (!isset($data[$field])) {
-                Flight::json(['error' => "Champ $field manquant"], 400);
-                return;
-            }
-        }
-        $id = Pret::create($data);
-        Flight::json(['id' => $id, 'message' => 'Prêt ajouté avec succès']);
-    }
-
-    public static function update($id) {
-        $data = Flight::request()->data->getData();
-        $success = Pret::update($id, $data);
-        if ($success) {
-            Flight::json(['message' => 'Prêt modifié avec succès']);
-        } else {
-            Flight::json(['error' => 'Erreur lors de la modification'], 400);
-        }
+    public static function update($id, $data) {
+        $db = getDB();
+        $stmt = $db->prepare("UPDATE pret SET client_id = ?, montant = ?, duree = ?, type_remboursement_id = ?, type_pret_id = ?, status_pret_id = ? WHERE id = ?");
+        $stmt->execute([
+            $data->client_id,
+            $data->montant,
+            $data->duree,
+            $data->type_remboursement_id,
+            $data->type_pret_id,
+            $data->status_pret_id,
+            $id
+        ]);
     }
 
     public static function delete($id) {
-        $success = Pret::delete($id);
-        if ($success) {
-            Flight::json(['message' => 'Prêt supprimé avec succès']);
-        } else {
-            Flight::json(['error' => 'Erreur lors de la suppression'], 400);
-        }
+        $db = getDB();
+        $stmt = $db->prepare("DELETE FROM pret WHERE id = ?");
+        $stmt->execute([$id]);
     }
 }

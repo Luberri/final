@@ -1,5 +1,3 @@
-CREATE DATABASE tp_flight;
-use tp_flight;
 CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100),
@@ -95,10 +93,32 @@ CREATE TABLE remboursement (
     FOREIGN KEY (pret_id) REFERENCES pret(id)
 );
 INSERT INTO type_pret (nom, detail, taux) VALUES
-('Pret Personnel', 'Pret non affecte à un achat precis, utilise pour des besoins personnels (voyage, mariage, etc.).', 8.50),
-('Pret Immobilier', 'Pret destine à financer l achat ou la construction d un bien immobilier.', 4.20),
+('Pret Personnel', 'Pret non affecte a un achat precis, utilise pour des besoins personnels (voyage, mariage, etc.).', 8.50),
+('Pret Immobilier', 'Pret destine a financer l achat ou la construction d un bien immobilier.', 4.20),
 ('Credit Auto', 'Pret pour financer l achat d un vehicule neuf ou d occasion.', 6.75),
 ('Pret etudiant', 'Pret accorde aux etudiants pour financer leurs etudes et frais de vie.', 3.00),
-('Credit à la Consommation', 'Pret à court terme pour l achat de biens de consommation (electromenager, meubles, etc.).', 9.10),
+('Credit a la Consommation', 'Pret a court terme pour l achat de biens de consommation (electromenager, meubles, etc.).', 9.10),
 ('Pret Travaux', 'Pret pour financer des travaux de renovation ou d amelioration du logement.', 5.80),
 ('Microcredit', 'Petit pret destine aux personnes n ayant pas acces aux prets bancaires classiques.', 12.00);
+
+INSERT INTO admin (nom, mdp) VALUES
+('admin1', 'admin123'), -- mot de passe en clair a remplacer par un hash
+('superuser', 'supersecure');
+
+
+INSERT INTO client (nom, prenom, mail, mdp, date_naissance) VALUES
+('Rasolofoson', 'Jean', 'jean.rasolofoson@mail.com', 'mdp1234', '1990-03-15'),
+('Andriamihaja', 'Miora', 'miora.andria@mail.com', 'motdepasse', '1985-07-22'),
+('Randriamalala', 'Tiana', 'tiana.randriamalala@mail.com', 'tiana2024', '1998-12-02'),
+('Rakoto', 'Hery', 'hery.rakoto@mail.com', 'azertyui', '2001-01-30'),
+('Raharinirina', 'Nomena', 'nomena.raharinirina@mail.com', 'passw0rd', '1995-06-10');
+
+
+INSERT INTO type_remboursement (nom, mois) VALUES
+('Mensuel', 1),        -- Paiement chaque mois
+('Trimestriel', 3),    -- Paiement tous les 3 mois
+('Semestriel', 6),     -- Paiement tous les 6 mois
+('Annuel', 12);        -- Paiement 1 fois par an
+
+INSERT INTO status_pret (nom, date) VALUES
+('En Attente', '2024-01-01');   

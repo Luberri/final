@@ -1,68 +1,57 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Ajouter un prêt</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2em; }
-        form { max-width: 400px; margin: auto; }
-        label { display: block; margin-top: 1em; }
-        input, select { width: 100%; padding: 0.5em; margin-top: 0.2em; }
-        button { margin-top: 1em; padding: 0.7em 1.5em; }
-        .success, .error { margin-top: 1em; padding: 0.5em; }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-    </style>
-</head>
-<body>
-    <h2>Ajouter un prêt</h2>
-    <form id="pretForm">
-        <label for="client_id">ID Client</label>
-        <input type="number" id="client_id" name="client_id" required>
+<?php
+require_once __DIR__ . '/../db.php';
 
-        <label for="montant">Montant</label>
-        <input type="number" id="montant" name="montant" step="0.01" required>
+class Pret {
+    public static function getAll() {
+        $db = getDB();
+        $stmt = $db->query("SELECT * FROM pret");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-        <label for="duree">Durée (mois)</label>
-        <input type="number" id="duree" name="duree" required>
+    public static function getById($id) {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT * FROM pret WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-        <label for="type_remboursement_id">Type de remboursement (ID)</label>
-        <input type="number" id="type_remboursement_id" name="type_remboursement_id" required>
-
-        <label for="type_pret_id">Type de prêt (ID)</label>
-        <input type="number" id="type_pret_id" name="type_pret_id" required>
-
-        <label for="status_pret_id">Status du prêt (ID)</label>
-        <input type="number" id="status_pret_id" name="status_pret_id" required>
-
-        <button type="submit">Ajouter</button>
-    </form>
-    <div id="message"></div>
-    <script>
-    document.getElementById('pretForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const data = {
-            client_id: document.getElementById('client_id').value,
-            montant: document.getElementById('montant').value,
-            duree: document.getElementById('duree').value,
-            type_remboursement_id: document.getElementById('type_remboursement_id').value,
-            type_pret_id: document.getElementById('type_pret_id').value,
-            status_pret_id: document.getElementById('status_pret_id').value
-        };
-        const response = await fetch('ws/prets', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        const result = await response.json();
-        const msgDiv = document.getElementById('message');
-        if (response.ok) {
-            msgDiv.innerHTML = '<div class="success">' + result.message + '</div>';
-            document.getElementById('pretForm').reset();
-        } else {
-            msgDiv.innerHTML = '<div class="error">' + (result.error || 'Erreur') + '</div>';
+    public static function create($data) {
+        $db = getDB();
+        try {
+            $stmt = $db->prepare("INSERT INTO pret (client_id, montant, duree, type_remboursement_id, type_pret_id, status_pret_id) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $data->client_id,
+                $data->montant,
+                $data->duree,
+                $data->type_remboursement_id,
+                $data->type_pret_id,
+                $data->status_pret_id
+            ]);
+            return $db->lastInsertId();
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+            exit;
         }
-    });
-    </script>
-</body>
-</html>
+    }
+
+    public static function update($id, $data) {
+        $db = getDB();
+        $stmt = $db->prepare("UPDATE pret SET client_id = ?, montant = ?, duree = ?, type_remboursement_id = ?, type_pret_id = ?, status_pret_id = ? WHERE id = ?");
+        $stmt->execute([
+            $data->client_id,
+            $data->montant,
+            $data->duree,
+            $data->type_remboursement_id,
+            $data->type_pret_id,
+            $data->status_pret_id,
+            $id
+        ]);
+    }
+
+    public static function delete($id) {
+        $db = getDB();
+        $stmt = $db->prepare("DELETE FROM pret WHERE id = ?");
+        $stmt->execute([$id]);
+    }
+}
