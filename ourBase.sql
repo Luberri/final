@@ -1,3 +1,8 @@
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100),
+    mdp VARCHAR(255)
+);
 -- Table Client
 CREATE TABLE client (
     id INT AUTO_INCREMENT PRIMARY KEY,
