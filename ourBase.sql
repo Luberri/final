@@ -1,3 +1,4 @@
+DROP DATABASE tp_flight;
 CREATE DATABASE tp_flight;
 use tp_flight;
 CREATE TABLE admin (
@@ -101,4 +102,4 @@ INSERT INTO type_pret (nom, detail, taux) VALUES
 ('Pret etudiant', 'Pret accorde aux etudiants pour financer leurs etudes et frais de vie.', 3.00),
 ('Credit a la Consommation', 'Pret a court terme pour l achat de biens de consommation (electromenager, meubles, etc.).', 9.10),
 ('Pret Travaux', 'Pret pour financer des travaux de renovation ou d amelioration du logement.', 5.80),
-('Microcredit', 'Petit pret destine aux personnes n ayant pas accès aux prets bancaires classiques.', 12.00);
+('Microcredit', 'Petit pret destine aux personnes n ayant pas acces aux prets bancaires classiques.', 12.00);
