@@ -1,57 +1,27 @@
 <?php
-require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../models/Pret.php';
 
-class Pret {
-    public static function getAll() {
-        $db = getDB();
-        $stmt = $db->query("SELECT * FROM pret");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getById($id) {
-        $db = getDB();
-        $stmt = $db->prepare("SELECT * FROM pret WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public static function create($data) {
-        $db = getDB();
-        try {
-            $stmt = $db->prepare("INSERT INTO pret (client_id, montant, duree, type_remboursement_id, type_pret_id, status_pret_id) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([
-                $data->client_id,
-                $data->montant,
-                $data->duree,
-                $data->type_remboursement_id,
-                $data->type_pret_id,
-                $data->status_pret_id
-            ]);
-            return $db->lastInsertId();
-        } catch (PDOException $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
-            exit;
+class PretController {
+    private static function parseRequestData() {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method === 'POST') {
+            return (object) $_POST;
+        } else if ($method === 'PUT') {
+            $rawData = file_get_contents("php://input");
+            $data = [];
+            parse_str($rawData, $data);
+            return (object) $data;
         }
+        return (object) [];
     }
 
-    public static function update($id, $data) {
-        $db = getDB();
-        $stmt = $db->prepare("UPDATE pret SET client_id = ?, montant = ?, duree = ?, type_remboursement_id = ?, type_pret_id = ?, status_pret_id = ? WHERE id = ?");
-        $stmt->execute([
-            $data->client_id,
-            $data->montant,
-            $data->duree,
-            $data->type_remboursement_id,
-            $data->type_pret_id,
-            $data->status_pret_id,
-            $id
-        ]);
-    }
-
-    public static function delete($id) {
-        $db = getDB();
-        $stmt = $db->prepare("DELETE FROM pret WHERE id = ?");
-        $stmt->execute([$id]);
+    public static function create() {
+        $data = self::parseRequestData();
+        try {
+            $id = Pret::create($data);
+            Flight::json(['message' => 'Prêt ajouté', 'id' => $id]);
+        } catch (Exception $e) {
+            Flight::json(['error' => 'Erreur lors de l\'ajout du prêt : ' . $e->getMessage()], 500);
+        }
     }
 }

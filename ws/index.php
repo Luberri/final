@@ -14,5 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 require 'routes/etudiant_routes.php';
 require 'routes/form_select_routes.php';
+require 'routes/Pret_routes.php';
 
 Flight::start();

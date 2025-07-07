@@ -2,94 +2,103 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Ajout d'un Prêt</title>
+    <title>Ajout d'un prêt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: Arial, sans-serif; background: #f4f4f4; }
-        .container { max-width: 500px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
+        .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
         h2 { text-align: center; }
-        label { display: block; margin-top: 15px; }
-        input, select { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        label { display: block; margin-top: 16px; }
+        input, select { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #ccc; }
         button { margin-top: 20px; width: 100%; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
         button:hover { background: #0056b3; }
-        .success, .error { margin-top: 15px; text-align: center; }
-        .success { color: green; }
-        .error { color: red; }
+        .message { margin-top: 16px; text-align: center; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Ajouter un Prêt</h2>
-    <form id="pretForm">
-        <label for="client_id">Client</label>
-        <select id="client_id" name="client_id" required></select>
+    <div class="container">
+        <h2>Ajouter un prêt</h2>
+        <form id="pretForm">
+            <label for="client_id">Client</label>
+            <select id="client_id" name="client_id" required></select>
 
-        <label for="montant">Montant</label>
-        <input type="number" step="0.01" id="montant" name="montant" required>
+            <label for="montant">Montant</label>
+            <input type="number" id="montant" name="montant" required min="1" step="0.01">
 
-        <label for="duree">Durée (mois)</label>
-        <input type="number" id="duree" name="duree" required>
+            <label for="duree">Durée (mois)</label>
+            <input type="number" id="duree" name="duree" required min="1">
 
-        <label for="type_remboursement_id">Type de Remboursement</label>
-        <select id="type_remboursement_id" name="type_remboursement_id" required></select>
+            <label for="type_remboursement_id">Type de remboursement</label>
+            <select id="type_remboursement_id" name="type_remboursement_id" required></select>
 
-        <label for="type_pret_id">Type de Prêt</label>
-        <select id="type_pret_id" name="type_pret_id" required></select>
+            <label for="type_pret_id">Type de prêt</label>
+            <select id="type_pret_id" name="type_pret_id" required></select>
 
-        <label for="status_pret_id">Statut du Prêt</label>
-        <select id="status_pret_id" name="status_pret_id" required></select>
-
-        <button type="submit">Ajouter</button>
-        <div class="success" id="successMsg" style="display:none;"></div>
-        <div class="error" id="errorMsg" style="display:none;"></div>
-    </form>
-</div>
-<script>
-function fillSelect(url, selectId, labelFn) {
-    fetch(url)
-        .then(r => r.json())
+            <button type="submit">Ajouter</button>
+        </form>
+        <div class="message" id="message"></div>
+    </div>
+    <script>
+    // Charger la liste des clients
+    fetch('ws/clients')
+        .then(res => res.json())
         .then(data => {
-            const select = document.getElementById(selectId);
-            select.innerHTML = '<option value="">Choisir...</option>';
-            data.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item.id;
-                opt.textContent = labelFn(item);
-                select.appendChild(opt);
+            const select = document.getElementById('client_id');
+            data.forEach(e => {
+                const option = document.createElement('option');
+                option.value = e.id;
+                option.textContent = e.nom + ' ' + e.prenom;
+                select.appendChild(option);
             });
         });
-}
-window.onload = function() {
-    fillSelect('ws/form/clients', 'client_id', c => c.nom + ' ' + c.prenom + ' (ID:' + c.id + ')');
-    fillSelect('ws/form/types_remboursement', 'type_remboursement_id', t => t.nom);
-    fillSelect('ws/form/types_pret', 'type_pret_id', t => t.nom);
-    fillSelect('ws/form/status_pret', 'status_pret_id', s => s.nom);
-};
-document.getElementById('pretForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const data = new URLSearchParams(new FormData(form));
-    document.getElementById('successMsg').style.display = 'none';
-    document.getElementById('errorMsg').style.display = 'none';
-    try {
-        const response = await fetch('ws/prets', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: data
+    // Charger la liste des types de remboursement
+    fetch('ws/type_remboursements')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('type_remboursement_id');
+            data.forEach(e => {
+                const option = document.createElement('option');
+                option.value = e.id;
+                option.textContent = e.nom;
+                select.appendChild(option);
+            });
         });
-        const result = await response.json();
-        if (response.ok) {
-            document.getElementById('successMsg').textContent = result.message || 'Prêt ajouté !';
-            document.getElementById('successMsg').style.display = 'block';
-            form.reset();
-        } else {
-            document.getElementById('errorMsg').textContent = result.error || 'Erreur lors de l\'ajout.';
-            document.getElementById('errorMsg').style.display = 'block';
-        }
-    } catch (err) {
-        document.getElementById('errorMsg').textContent = 'Erreur réseau ou serveur.';
-        document.getElementById('errorMsg').style.display = 'block';
-    }
-});
-</script>
+    // Charger la liste des types de prêt
+    fetch('ws/type_prets')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('type_pret_id');
+            data.forEach(e => {
+                const option = document.createElement('option');
+                option.value = e.id;
+                option.textContent = e.nom;
+                select.appendChild(option);
+            });
+        });
+    // Soumission du formulaire
+    document.getElementById('pretForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('ws/prets', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.error) {
+                document.getElementById('message').textContent = data.error;
+                document.getElementById('message').style.color = 'red';
+            } else {
+                document.getElementById('message').textContent = data.message || 'Erreur';
+                document.getElementById('message').style.color = 'green';
+                if(data.id) this.reset();
+            }
+        })
+        .catch(() => {
+            document.getElementById('message').textContent = 'Erreur lors de l\'ajout';
+            document.getElementById('message').style.color = 'red';
+        });
+    });
+    </script>
 </body>
 </html>

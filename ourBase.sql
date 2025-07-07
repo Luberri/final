@@ -48,10 +48,10 @@ CREATE TABLE fond_detail (
 -- Table FondHistorique
 CREATE TABLE fond_historique (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    fond_id INT,
+    fond_detail_id INT,
     montant DECIMAL(12,2),
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fond_id) REFERENCES fond(id)
+    FOREIGN KEY (fond_detail_id) REFERENCES fond_detail(id)
 );
 
 -- Table TypeRemboursement
@@ -64,8 +64,9 @@ CREATE TABLE type_remboursement (
 -- Table StatusPret
 CREATE TABLE status_pret (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    id_pret INT,
     nom VARCHAR(100),
-    date DATE
+    date DATE default CURRENT_DATE
 );
 
 -- Table Pret
@@ -76,11 +77,9 @@ CREATE TABLE pret (
     duree INT,
     type_remboursement_id INT,
     type_pret_id INT,
-    status_pret_id INT,
     FOREIGN KEY (client_id) REFERENCES client(id),
     FOREIGN KEY (type_remboursement_id) REFERENCES type_remboursement(id),
-    FOREIGN KEY (type_pret_id) REFERENCES type_pret(id),
-    FOREIGN KEY (status_pret_id) REFERENCES status_pret(id)
+    FOREIGN KEY (type_pret_id) REFERENCES type_pret(id)
 );
 
 -- Table Remboursement
@@ -119,6 +118,3 @@ INSERT INTO type_remboursement (nom, mois) VALUES
 ('Trimestriel', 3),    -- Paiement tous les 3 mois
 ('Semestriel', 6),     -- Paiement tous les 6 mois
 ('Annuel', 12);        -- Paiement 1 fois par an
-
-INSERT INTO status_pret (nom, date) VALUES
-('En Attente', '2024-01-01');   
