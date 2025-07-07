@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un Prêt</title>
+</head>
+<body>
+    <h1>Formulaire d'ajout de prêt</h1>
+    <form id="pretForm">
+        <label>Client ID: <input type="number" name="client_id" required></label><br>
+        <label>Montant: <input type="number" step="0.01" name="montant" required></label><br>
+        <label>Durée (mois): <input type="number" name="duree" required></label><br>
+        <label>Type Remboursement ID: <input type="number" name="type_remboursement_id" required></label><br>
+        <label>Type Prêt ID: <input type="number" name="type_pret_id" required></label><br>
+        <label>Status Prêt ID: <input type="number" name="status_pret_id" required></label><br>
+        <button type="submit">Ajouter</button>
+    </form>
+    <div id="result" style="color:red;"></div>
+    <script>
+    document.getElementById('pretForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = Object.fromEntries(new FormData(form).entries());
+        // Convertir les champs en nombres
+        data.client_id = Number(data.client_id);
+        data.montant = Number(data.montant);
+        data.duree = Number(data.duree);
+        data.type_remboursement_id = Number(data.type_remboursement_id);
+        data.type_pret_id = Number(data.type_pret_id);
+        data.status_pret_id = Number(data.status_pret_id);
+        try {
+            const res = await fetch('http://localhost/final/ws/prets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const json = await res.json();
+            if (!res.ok || json.error) {
+                document.getElementById('result').textContent = json.error || 'Erreur lors de l\'ajout';
+            } else {
+                document.getElementById('result').style.color = 'green';
+                document.getElementById('result').textContent = 'Prêt ajouté avec succès (ID: ' + json.id + ')';
+                form.reset();
+            }
+        } catch (err) {
+            document.getElementById('result').textContent = 'Erreur réseau ou serveur';
+        }
+    };
+    </script>
+</body>
+</html>

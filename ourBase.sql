@@ -1,5 +1,5 @@
 DROP DATABASE tp_flight;
-CREATE DATABASE tp_flight;
+CREATE DATABASE tp_flight CHARACTER SET utf8mb4;;
 use tp_flight;
 CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -43,18 +43,16 @@ CREATE TABLE fond (
 -- Table FondDetail
 CREATE TABLE fond_detail (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    fond_id INT,
-    detail TEXT,
-    FOREIGN KEY (fond_id) REFERENCES fond(id)
+    detail TEXT
 );
 
 -- Table FondHistorique
 CREATE TABLE fond_historique (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    fond_id INT,
     montant DECIMAL(12,2),
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fond_id) REFERENCES fond(id)
+    fond_detail_id INT,
+    FOREIGN KEY (fond_detail_id) REFERENCES fond_detail(id)
 );
 
 -- Table TypeRemboursement
@@ -70,7 +68,8 @@ CREATE TABLE status_pret (
     nom VARCHAR(100),
     date DATE
 );
-
+insert into status_pret (nom, date) VALUES
+('En Attente', '2023-10-01');
 -- Table Pret
 CREATE TABLE pret (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -103,3 +102,21 @@ INSERT INTO type_pret (nom, detail, taux) VALUES
 ('Credit a la Consommation', 'Pret a court terme pour l achat de biens de consommation (electromenager, meubles, etc.).', 9.10),
 ('Pret Travaux', 'Pret pour financer des travaux de renovation ou d amelioration du logement.', 5.80),
 ('Microcredit', 'Petit pret destine aux personnes n ayant pas acces aux prets bancaires classiques.', 12.00);
+
+
+INSERT INTO admin (nom, mdp) VALUES
+('admin1', 'admin123');
+
+INSERT INTO client (nom, prenom, mail, mdp, date_naissance) VALUES
+('Rasolofoson', 'Jean', 'jean.rasolofoson@mail.com', 'mdp1234', '1990-03-15'),
+('Andriamihaja', 'Miora', 'miora.andria@mail.com', 'mdp1234', '1985-07-22'),
+('Randriamalala', 'Tiana', 'tiana.randriamalala@mail.com', 'mdp1234', '1998-12-02'),
+('Rakoto', 'Hery', 'hery.rakoto@mail.com', 'mdp1234', '2001-01-30'),
+('Raharinirina', 'Nomena', 'nomena.raharinirina@mail.com', 'mdp1234', '1995-06-10');
+
+
+INSERT INTO type_remboursement (nom, mois) VALUES
+('Mensuel', 1),        -- Paiement chaque mois
+('Trimestriel', 3),    -- Paiement tous les 3 mois
+('Semestriel', 6),     -- Paiement tous les 6 mois
+('Annuel', 12);        -- Paiement 1 fois par an
