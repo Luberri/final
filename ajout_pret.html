@@ -34,6 +34,14 @@
             <label for="type_pret_id">Type de prêt</label>
             <select id="type_pret_id" name="type_pret_id" required></select>
 
+            <label>
+                <input type="checkbox" id="has_assurance" onchange="document.getElementById('assurance-group').style.display = this.checked ? 'block' : 'none';">
+                Ajouter une assurance
+            </label>
+            <div id="assurance-group" style="display:none;">
+                <input type="number" id="assurance" name="assurance" placeholder="Assurance (%)" min="0" max="100" step="0.01" value="0">
+            </div>
+
             <button type="submit">Ajouter</button>
         </form>
         <div class="message" id="message"></div>
@@ -79,6 +87,13 @@
     document.getElementById('pretForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
+        // Ajoute l'assurance seulement si activée
+        const hasAssurance = document.getElementById('has_assurance').checked;
+        if (hasAssurance) {
+            formData.set('assurance', document.getElementById('assurance').value || 0);
+        } else {
+            formData.set('assurance', 0);
+        }
         fetch('ws/prets', {
             method: 'POST',
             body: formData
