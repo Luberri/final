@@ -38,20 +38,28 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ montant, detail })
       })
-      .then(r => r.json())
-      .then(res => {
+      .then(async r => {
+        let text = await r.text();
+        let res;
+        try {
+          res = JSON.parse(text);
+        } catch (e) {
+          document.getElementById('fond-error').textContent = 'Réponse non JSON: ' + text;
+          document.getElementById('fond-success').textContent = '';
+          return;
+        }
         if(res.success) {
           document.getElementById('fond-success').textContent = 'Fond ajouté !';
           document.getElementById('fond-error').textContent = '';
           document.getElementById('fond-montant').value = '';
           document.getElementById('fond-detail').value = '';
         } else {
-          document.getElementById('fond-error').textContent = res.error || 'Erreur.';
+          document.getElementById('fond-error').textContent = (res.error || 'Erreur.') + ' | Debug: ' + JSON.stringify(res);
           document.getElementById('fond-success').textContent = '';
         }
       })
-      .catch(() => {
-        document.getElementById('fond-error').textContent = 'Erreur réseau.';
+      .catch((err) => {
+        document.getElementById('fond-error').textContent = 'Erreur réseau: ' + err;
         document.getElementById('fond-success').textContent = '';
       });
     }
@@ -65,8 +73,16 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nom, detail, taux })
       })
-      .then(r => r.json())
-      .then(res => {
+      .then(async r => {
+        let text = await r.text();
+        let res;
+        try {
+          res = JSON.parse(text);
+        } catch (e) {
+          document.getElementById('pret-error').textContent = 'Réponse non JSON: ' + text;
+          document.getElementById('pret-success').textContent = '';
+          return;
+        }
         if(res.success) {
           document.getElementById('pret-success').textContent = 'Type de prêt créé !';
           document.getElementById('pret-error').textContent = '';
@@ -74,12 +90,12 @@
           document.getElementById('pret-detail').value = '';
           document.getElementById('pret-taux').value = '';
         } else {
-          document.getElementById('pret-error').textContent = res.error || 'Erreur.';
+          document.getElementById('pret-error').textContent = (res.error || 'Erreur.') + ' | Debug: ' + JSON.stringify(res);
           document.getElementById('pret-success').textContent = '';
         }
       })
-      .catch(() => {
-        document.getElementById('pret-error').textContent = 'Erreur réseau.';
+      .catch((err) => {
+        document.getElementById('pret-error').textContent = 'Erreur réseau: ' + err;
         document.getElementById('pret-success').textContent = '';
       });
     }

@@ -1,3 +1,6 @@
+<?php 
+// Suppression de l'inclusion inutile de FondController.php ici
+?>
 <!DOCTYPE html>
 <html lang="fr">
 

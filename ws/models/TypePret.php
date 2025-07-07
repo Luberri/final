@@ -1,7 +1,7 @@
 <?php
 class TypePret {
     public static function ajouter($nom, $detail, $taux) {
-        global $db;
+        $db = getDB();
         try {
             $stmt = $db->prepare('INSERT INTO type_pret (nom, detail, taux) VALUES (?, ?, ?)');
             $stmt->execute([$nom, $detail, $taux]);

@@ -1,7 +1,7 @@
 <?php
 class Fond {
     public static function ajouterFond($montant, $detail) {
-        global $db;
+        $db = getDB();
         try {
             $db->beginTransaction();
             // Ajouter le fond principal

@@ -96,6 +96,7 @@
             <a href="#" class="menu-item" onclick="loadClients()">Gestion des Clients</a>
             <a href="interets" class="menu-item">Intérêts Gagnés</a>
             <a href="#" class="menu-item" onclick="loadStatistiques()">Statistiques</a>
+            <a href="views/ajout_fond.php" class="menu-item">Ajouter un Fond</a>
         </div>
 
         <div class="info">
