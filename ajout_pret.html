@@ -79,7 +79,7 @@
             data.forEach(e => {
                 const option = document.createElement('option');
                 option.value = e.id;
-                option.textContent = e.nom;
+                option.textContent = `${e.nom} (${e.taux}%)`;
                 select.appendChild(option);
             });
         });
