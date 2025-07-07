@@ -1,6 +1,3 @@
-drop database tp_flight;
-create database tp_flight;
-use tp_flight;
 
 CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -118,6 +115,7 @@ INSERT INTO client (nom, prenom, mail, mdp, date_naissance) VALUES
 ('Rakoto', 'Hery', 'hery.rakoto@mail.com', 'azertyui', '2001-01-30'),
 ('Raharinirina', 'Nomena', 'nomena.raharinirina@mail.com', 'passw0rd', '1995-06-10');
 
+
 INSERT INTO type_remboursement (nom, mois) VALUES
 ('Mensuel', 1),
 ('Trimestriel', 3),
@@ -223,3 +221,6 @@ SELECT
 FROM vue_interets_mensuels
 GROUP BY annee, mois
 ORDER BY annee, mois;
+
+
+ALTER TABLE pret ADD COLUMN assurance DECIMAL(5,2) DEFAULT 0;

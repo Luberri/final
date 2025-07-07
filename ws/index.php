@@ -20,7 +20,9 @@ header('Access-Control-Allow-Headers: Content-Type');
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
-
+require 'routes/etudiant_routes.php';
+require 'routes/form_select_routes.php';
+require 'routes/Pret_routes.php';
 // Route racine - redirection vers la page de login
 Flight::route('/', function () {
     Flight::redirect('../index.php');
@@ -35,5 +37,6 @@ Flight::route('/test', function () {
 require_once 'routes/login.php';
 require_once 'routes/etudiant.php';
 require_once 'routes/interets.php';
+require_once 'routes/prets.php';
 
 Flight::start();
