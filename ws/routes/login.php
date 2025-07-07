@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../controllers/LoginController.php';
+require_once __DIR__ . '/../controllers/FondController.php';
+require_once __DIR__ . '/../controllers/TypePretController.php';
 
 // Route pour la connexion (POST)
 Flight::route('POST /login', function () {
@@ -38,3 +40,8 @@ Flight::route('POST /expire-session', function () {
     session_destroy();
     Flight::json(['message' => 'Session expirée avec succès']);
 });
+
+Flight::route('POST /fonds', ['FondController', 'ajouterFond']);
+
+// Route pour création de type de prêt
+Flight::route('POST /typeprets', ['TypePretController', 'ajouter']);
