@@ -13,19 +13,12 @@ CREATE TABLE client (
     date_naissance DATE
 );
 
--- Table TypeTaux
-CREATE TABLE type_taux (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    taux DECIMAL(5,2)
-);
-
 -- Table TypePret
 CREATE TABLE type_pret (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100),
     detail TEXT,
-    taux_id INT,
-    FOREIGN KEY (taux_id) REFERENCES type_taux(id)
+    taux DECIMAL(12,2)
 );
 
 -- Table ClientDetail
