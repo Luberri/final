@@ -1,57 +1,95 @@
-<?php
-require_once __DIR__ . '/../db.php';
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajout d'un Prêt</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { max-width: 500px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
+        h2 { text-align: center; }
+        label { display: block; margin-top: 15px; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        button { margin-top: 20px; width: 100%; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .success, .error { margin-top: 15px; text-align: center; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Ajouter un Prêt</h2>
+    <form id="pretForm">
+        <label for="client_id">Client</label>
+        <select id="client_id" name="client_id" required></select>
 
-class Pret {
-    public static function getAll() {
-        $db = getDB();
-        $stmt = $db->query("SELECT * FROM pret");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+        <label for="montant">Montant</label>
+        <input type="number" step="0.01" id="montant" name="montant" required>
 
-    public static function getById($id) {
-        $db = getDB();
-        $stmt = $db->prepare("SELECT * FROM pret WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+        <label for="duree">Durée (mois)</label>
+        <input type="number" id="duree" name="duree" required>
 
-    public static function create($data) {
-        $db = getDB();
-        try {
-            $stmt = $db->prepare("INSERT INTO pret (client_id, montant, duree, type_remboursement_id, type_pret_id, status_pret_id) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([
-                $data->client_id,
-                $data->montant,
-                $data->duree,
-                $data->type_remboursement_id,
-                $data->type_pret_id,
-                $data->status_pret_id
-            ]);
-            return $db->lastInsertId();
-        } catch (PDOException $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
-            exit;
-        }
-    }
+        <label for="type_remboursement_id">Type de Remboursement</label>
+        <select id="type_remboursement_id" name="type_remboursement_id" required></select>
 
-    public static function update($id, $data) {
-        $db = getDB();
-        $stmt = $db->prepare("UPDATE pret SET client_id = ?, montant = ?, duree = ?, type_remboursement_id = ?, type_pret_id = ?, status_pret_id = ? WHERE id = ?");
-        $stmt->execute([
-            $data->client_id,
-            $data->montant,
-            $data->duree,
-            $data->type_remboursement_id,
-            $data->type_pret_id,
-            $data->status_pret_id,
-            $id
-        ]);
-    }
+        <label for="type_pret_id">Type de Prêt</label>
+        <select id="type_pret_id" name="type_pret_id" required></select>
 
-    public static function delete($id) {
-        $db = getDB();
-        $stmt = $db->prepare("DELETE FROM pret WHERE id = ?");
-        $stmt->execute([$id]);
-    }
+        <label for="status_pret_id">Statut du Prêt</label>
+        <select id="status_pret_id" name="status_pret_id" required></select>
+
+        <button type="submit">Ajouter</button>
+        <div class="success" id="successMsg" style="display:none;"></div>
+        <div class="error" id="errorMsg" style="display:none;"></div>
+    </form>
+</div>
+<script>
+function fillSelect(url, selectId, labelFn) {
+    fetch(url)
+        .then(r => r.json())
+        .then(data => {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Choisir...</option>';
+            data.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.id;
+                opt.textContent = labelFn(item);
+                select.appendChild(opt);
+            });
+        });
 }
+window.onload = function() {
+    fillSelect('ws/form/clients', 'client_id', c => c.nom + ' ' + c.prenom + ' (ID:' + c.id + ')');
+    fillSelect('ws/form/types_remboursement', 'type_remboursement_id', t => t.nom);
+    fillSelect('ws/form/types_pret', 'type_pret_id', t => t.nom);
+    fillSelect('ws/form/status_pret', 'status_pret_id', s => s.nom);
+};
+document.getElementById('pretForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new URLSearchParams(new FormData(form));
+    document.getElementById('successMsg').style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
+    try {
+        const response = await fetch('ws/prets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: data
+        });
+        const result = await response.json();
+        if (response.ok) {
+            document.getElementById('successMsg').textContent = result.message || 'Prêt ajouté !';
+            document.getElementById('successMsg').style.display = 'block';
+            form.reset();
+        } else {
+            document.getElementById('errorMsg').textContent = result.error || 'Erreur lors de l\'ajout.';
+            document.getElementById('errorMsg').style.display = 'block';
+        }
+    } catch (err) {
+        document.getElementById('errorMsg').textContent = 'Erreur réseau ou serveur.';
+        document.getElementById('errorMsg').style.display = 'block';
+    }
+});
+</script>
+</body>
+</html>
