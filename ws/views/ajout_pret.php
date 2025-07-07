@@ -98,7 +98,7 @@
         } else {
             formData.set('assurance', 0);
         }
-        fetch('ws/prets', {
+        fetch(window.apiBase + '/prets', {
             method: 'POST',
             body: formData
         })

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../db.php';
+
 class TypePret {
     public static function ajouter($nom, $detail, $taux) {
          $db = getDB();
@@ -12,5 +13,11 @@ class TypePret {
             echo json_encode(['error' => "Erreur lors de l'ajout du type de prêt : " . $e->getMessage()]);
             exit;
         }
+    }
+
+    public static function getAll() {
+        $db = getDB();
+        $stmt = $db->query("SELECT * FROM type_pret");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -36,9 +36,15 @@ Flight::route('/ajout_fond.php', function() {
     Flight::render('ajout_fond');
 });
 
+// Route pour la page d'ajout de prêts
+Flight::route('/ajout_pret.php', function() {
+    Flight::render('ajout_pret');
+});
+
 // Inclure les routes
 require_once 'routes/login.php';
 require_once 'routes/etudiant.php';
 require_once 'routes/interets.php';
+require_once 'routes/form_select_routes.php';
 
 Flight::start();
