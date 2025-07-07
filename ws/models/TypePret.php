@@ -12,4 +12,10 @@ class TypePret {
             exit;
         }
     }
+
+    public static function getAll() {
+        $db = getDB();
+        $stmt = $db->query('SELECT * FROM type_pret');
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
