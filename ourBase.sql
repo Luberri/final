@@ -92,3 +92,11 @@ CREATE TABLE remboursement (
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (pret_id) REFERENCES pret(id)
 );
+INSERT INTO type_pret (nom, detail, taux) VALUES
+('Pret Personnel', 'Pret non affecte à un achat precis, utilise pour des besoins personnels (voyage, mariage, etc.).', 8.50),
+('Pret Immobilier', 'Pret destine à financer l achat ou la construction d un bien immobilier.', 4.20),
+('Credit Auto', 'Pret pour financer l achat d un vehicule neuf ou d occasion.', 6.75),
+('Pret etudiant', 'Pret accorde aux etudiants pour financer leurs etudes et frais de vie.', 3.00),
+('Credit à la Consommation', 'Pret à court terme pour l achat de biens de consommation (electromenager, meubles, etc.).', 9.10),
+('Pret Travaux', 'Pret pour financer des travaux de renovation ou d amelioration du logement.', 5.80),
+('Microcredit', 'Petit pret destine aux personnes n’ayant pas accès aux prets bancaires classiques.', 12.00);
