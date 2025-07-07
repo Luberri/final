@@ -29,11 +29,11 @@
   <br><br>
   <a href="index.html">Retour à l'accueil</a>
   <script>
-    const apiBase = "http://localhost/final/ws";
-    function ajouterFond() {
+    window.apiBase = window.apiBase || "http://localhost/final/ws";
+    window.ajouterFond = function() {
       const montant = document.getElementById('fond-montant').value;
       const detail = document.getElementById('fond-detail').value;
-      fetch(apiBase + '/fonds', {
+      fetch(window.apiBase + '/fonds', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ montant, detail })
@@ -56,11 +56,11 @@
       });
     }
 
-    function ajouterTypePret() {
+    window.ajouterTypePret = function() {
       const nom = document.getElementById('pret-nom').value;
       const detail = document.getElementById('pret-detail').value;
       const taux = document.getElementById('pret-taux').value;
-      fetch(apiBase + '/typeprets', {
+      fetch(window.apiBase + '/typeprets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nom, detail, taux })

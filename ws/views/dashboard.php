@@ -149,7 +149,7 @@
         }
 
         function loadPrets() {
-            fetch('ajout_fond.php')
+            fetch('ajout_fond.php') // ou '/ws/ajout_fond.php' si besoin
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('content').innerHTML = html;
@@ -169,6 +169,7 @@
                     document.getElementById('content').innerHTML = '<p>Erreur lors du chargement du module d\'ajout de fond.</p>';
                 });
         }
+
         function loadClients() {
             document.getElementById('content').innerHTML = `
         <h3>Gestion des Clients</h3>

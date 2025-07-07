@@ -31,6 +31,11 @@ Flight::route('/test', function () {
     Flight::json(['message' => 'API fonctionne correctement', 'timestamp' => date('Y-m-d H:i:s')]);
 });
 
+// Route pour la page d'ajout de fonds
+Flight::route('/ajout_fond.php', function() {
+    Flight::render('ajout_fond');
+});
+
 // Inclure les routes
 require_once 'routes/login.php';
 require_once 'routes/etudiant.php';
