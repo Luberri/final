@@ -1,3 +1,4 @@
+DROP DATABASE tp_flight;
 CREATE DATABASE tp_flight;
 use tp_flight;
 CREATE TABLE admin (
@@ -42,18 +43,16 @@ CREATE TABLE fond (
 -- Table FondDetail
 CREATE TABLE fond_detail (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    fond_id INT,
-    detail TEXT,
-    FOREIGN KEY (fond_id) REFERENCES fond(id)
+    detail TEXT
 );
 
 -- Table FondHistorique
 CREATE TABLE fond_historique (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    fond_id INT,
     montant DECIMAL(12,2),
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fond_id) REFERENCES fond(id)
+    fond_detail_id INT,
+    FOREIGN KEY (fond_detail_id) REFERENCES fond_detail(id)
 );
 
 -- Table TypeRemboursement
@@ -95,10 +94,21 @@ CREATE TABLE remboursement (
     FOREIGN KEY (pret_id) REFERENCES pret(id)
 );
 INSERT INTO type_pret (nom, detail, taux) VALUES
-('Pret Personnel', 'Pret non affecte à un achat precis, utilise pour des besoins personnels (voyage, mariage, etc.).', 8.50),
-('Pret Immobilier', 'Pret destine à financer l achat ou la construction d un bien immobilier.', 4.20),
+('Pret Personnel', 'Pret non affecte a un achat precis, utilise pour des besoins personnels (voyage, mariage, etc.).', 8.50),
+('Pret Immobilier', 'Pret destine a financer l achat ou la construction d un bien immobilier.', 4.20),
 ('Credit Auto', 'Pret pour financer l achat d un vehicule neuf ou d occasion.', 6.75),
 ('Pret etudiant', 'Pret accorde aux etudiants pour financer leurs etudes et frais de vie.', 3.00),
-('Credit à la Consommation', 'Pret à court terme pour l achat de biens de consommation (electromenager, meubles, etc.).', 9.10),
+('Credit a la Consommation', 'Pret a court terme pour l achat de biens de consommation (electromenager, meubles, etc.).', 9.10),
 ('Pret Travaux', 'Pret pour financer des travaux de renovation ou d amelioration du logement.', 5.80),
 ('Microcredit', 'Petit pret destine aux personnes n ayant pas acces aux prets bancaires classiques.', 12.00);
+
+
+INSERT INTO admin (nom, mdp) VALUES
+('admin1', 'admin123');
+
+INSERT INTO client (nom, prenom, mail, mdp, date_naissance) VALUES
+('Rasolofoson', 'Jean', 'jean.rasolofoson@mail.com', 'mdp1234', '1990-03-15'),
+('Andriamihaja', 'Miora', 'miora.andria@mail.com', 'mdp1234', '1985-07-22'),
+('Randriamalala', 'Tiana', 'tiana.randriamalala@mail.com', 'mdp1234', '1998-12-02'),
+('Rakoto', 'Hery', 'hery.rakoto@mail.com', 'mdp1234', '2001-01-30'),
+('Raharinirina', 'Nomena', 'nomena.raharinirina@mail.com', 'mdp1234', '1995-06-10');
