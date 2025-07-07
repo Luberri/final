@@ -395,7 +395,8 @@
             const labels = [];
             const dataPoints = [];
             const nomsMois = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
-                'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+            ];
 
             // Trier les données par année et mois
             const donneesTriees = donnees.sort((a, b) => {

@@ -35,5 +35,6 @@ Flight::route('/test', function () {
 require_once 'routes/login.php';
 require_once 'routes/etudiant.php';
 require_once 'routes/interets.php';
+require_once 'routes/prets.php';
 
 Flight::start();
