@@ -129,7 +129,7 @@
         if (response.success) {
           showMessage(`Connexion réussie! Bienvenue ${response.admin.nom}`, 'success');
           setTimeout(() => {
-            window.location.href = 'views/dashboard.php';
+            window.location.href = 'ws/dashboard';
           }, 1000);
         } else {
           showMessage(response.error || 'Erreur de connexion', 'error');

@@ -94,6 +94,7 @@
             <a href="#" class="menu-item" onclick="loadEtudiants()">Gestion des Étudiants</a>
             <a href="#" class="menu-item" onclick="loadPrets()">Gestion des Prêts</a>
             <a href="#" class="menu-item" onclick="loadClients()">Gestion des Clients</a>
+            <a href="interets" class="menu-item">Intérêts Gagnés</a>
             <a href="#" class="menu-item" onclick="loadStatistiques()">Statistiques</a>
         </div>
 

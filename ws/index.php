@@ -2,8 +2,14 @@
 require 'vendor/autoload.php';
 require 'db.php';
 
+// Configuration des vues Flight
+Flight::set('flight.views.path', __DIR__ . '/views');
+
 // Démarrer la session
 session_start();
+
+// Configuration de Flight pour les vues
+Flight::set('flight.views.path', __DIR__ . '/views');
 
 // Headers CORS
 header('Access-Control-Allow-Origin: *');
@@ -28,5 +34,6 @@ Flight::route('/test', function () {
 // Inclure les routes
 require_once 'routes/login.php';
 require_once 'routes/etudiant.php';
+require_once 'routes/interets.php';
 
 Flight::start();

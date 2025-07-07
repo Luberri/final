@@ -38,3 +38,15 @@ Flight::route('POST /expire-session', function () {
     session_destroy();
     Flight::json(['message' => 'Session expirée avec succès']);
 });
+
+// Route pour afficher le dashboard (GET)
+Flight::route('GET /dashboard', function () {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {
+        Flight::redirect('../index.php');
+        return;
+    }
+    Flight::render('dashboard');
+});
