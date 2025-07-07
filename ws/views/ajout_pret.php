@@ -115,6 +115,7 @@
         })
         .catch(() => {
             document.getElementById('message').textContent = 'Erreur lors de l\'ajout';
+            
             document.getElementById('message').style.color = 'red';
         });
     });

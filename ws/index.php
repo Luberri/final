@@ -46,5 +46,8 @@ require_once 'routes/login.php';
 require_once 'routes/etudiant.php';
 require_once 'routes/interets.php';
 require_once 'routes/form_select_routes.php';
+require_once 'routes/Pret_routes.php';
+
+Flight::route('POST /prets', ['PretController', 'create']);
 
 Flight::start();
