@@ -94,7 +94,6 @@
             <a href="#" class="menu-item" onclick="loadEtudiants()">Gestion des Étudiants</a>
             <a href="#" class="menu-item" onclick="loadPrets()">Gestion des Prêts</a>
             <a href="#" class="menu-item" onclick="loadClients()">Gestion des Clients</a>
-            <a href="interets" class="menu-item">Intérêts Gagnés</a>
             <a href="#" class="menu-item" onclick="loadStatistiques()">Statistiques</a>
         </div>
 
@@ -169,6 +168,7 @@
                     document.getElementById('content').innerHTML = '<p>Erreur lors du chargement du module d\'ajout de fond.</p>';
                 });
         }
+
         function loadClients() {
             document.getElementById('content').innerHTML = `
         <h3>Gestion des Clients</h3>
