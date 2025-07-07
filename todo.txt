@@ -1,6 +1,5 @@
 fonctionnalite 
 
-- login client et login admin (Fana)
 - cote admin ajout de fond dans l'etablissement(IOty) 
 - Ajout de fond dans l'établissement financier (EF) (IOty)
 - création type de prêt avec différent taux (IOTY) 
