@@ -5,7 +5,14 @@ class PretController {
     private static function parseRequestData() {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method === 'POST') {
-            return (object) $_POST;
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+            if (stripos($contentType, 'application/json') !== false) {
+                $rawData = file_get_contents('php://input');
+                $data = json_decode($rawData, true);
+                return (object) $data;
+            } else {
+                return (object) $_POST;
+            }
         } else if ($method === 'PUT') {
             $rawData = file_get_contents("php://input");
             $data = [];

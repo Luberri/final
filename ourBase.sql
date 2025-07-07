@@ -223,3 +223,5 @@ SELECT
 FROM vue_interets_mensuels
 GROUP BY annee, mois
 ORDER BY annee, mois;
+
+ALTER TABLE pret ADD COLUMN assurance DECIMAL(5,2) DEFAULT 0;
