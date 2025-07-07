@@ -1,6 +1,4 @@
 <?php
-
-
 require_once 'models/PretModel.php';
 
 class PretController
