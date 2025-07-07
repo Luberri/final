@@ -46,7 +46,7 @@ CREATE TABLE fond_detail (
     detail TEXT
 );
 
--- Table FondHistorique
+-- Table FondHistorique/
 CREATE TABLE fond_historique (
     id INT AUTO_INCREMENT PRIMARY KEY,
     montant DECIMAL(12,2),
