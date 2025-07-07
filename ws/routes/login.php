@@ -50,3 +50,8 @@ Flight::route('GET /dashboard', function () {
     }
     Flight::render('dashboard');
 });
+
+Flight::route('POST /fonds', ['FondController', 'ajouterFond']);
+
+// Route pour création de type de prêt
+Flight::route('POST /typeprets', ['TypePretController', 'ajouter']);
