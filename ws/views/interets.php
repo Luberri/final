@@ -1,4 +1,4 @@
-    <!DOCTY<!DOCTYPE html>
+<!DOCTY<!DOCTYPE html>
         <html lang="fr">
 
         <head>
@@ -207,14 +207,45 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Graphique des intérêts mensuels -->
+                        <div class="card mt-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Évolution des Intérêts Mensuels</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Type de graphique:</label>
+                                        <select id="typeGraphique" class="form-select" onchange="changerTypeGraphique()">
+                                            <option value="line">Courbe</option>
+                                            <option value="bar">Barres</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">&nbsp;</label>
+                                        <div>
+                                            <button class="btn btn-primary" onclick="actualiserGraphique()">
+                                                <i class="fas fa-refresh me-2"></i>Actualiser
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="position: relative; height: 400px;">
+                                    <canvas id="graphiqueInterets"></canvas>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
                 let currentData = [];
                 const apiBase = "./"; // Chemin relatif vers les APIs
+                let chartInstance = null;
 
                 // Charger les données au démarrage
                 document.addEventListener('DOMContentLoaded', function() {
@@ -325,6 +356,116 @@
                         .catch(error => console.error('Erreur par type:', error));
                 }
 
+                // Fonction principale pour créer le graphique
+                function creerGraphique(donnees) {
+                    const labels = [];
+                    const dataPoints = [];
+                    const nomsMois = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
+                        'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+                    ];
+
+                    // Trie les données par année puis mois
+                    const donneesTriees = [...donnees].sort((a, b) => {
+                        if (a.annee === b.annee) {
+                            return a.mois - b.mois;
+                        }
+                        return a.annee - b.annee;
+                    });
+
+                    donneesTriees.forEach(row => {
+                        labels.push(`${nomsMois[row.mois]} ${row.annee}`);
+                        dataPoints.push(parseFloat(row.total_interets_mois));
+                    });
+
+                    const ctx = document.getElementById('graphiqueInterets').getContext('2d');
+
+                    // Détruire le graphique existant s'il y en a un
+                    if (chartInstance) {
+                        chartInstance.destroy();
+                    }
+
+                    const typeGraphique = document.getElementById('typeGraphique').value;
+
+                    chartInstance = new Chart(ctx, {
+                        type: typeGraphique,
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Intérêts Mensuels (Ar)',
+                                data: dataPoints,
+                                borderColor: typeGraphique === 'line' ? 'rgb(75, 192, 192)' : 'rgba(54, 162, 235, 1)',
+                                backgroundColor: typeGraphique === 'line' ? 'rgba(75, 192, 192, 0.2)' : 'rgba(54, 162, 235, 0.2)',
+                                borderWidth: typeGraphique === 'line' ? 2 : 1,
+                                fill: typeGraphique === 'line' ? true : false,
+                                tension: typeGraphique === 'line' ? 0.4 : 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Évolution des Intérêts Gagnés par Mois'
+                                },
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return new Intl.NumberFormat('fr-FR', {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 0
+                                        }).format(value) + ' Ar';
+                                        }
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        maxRotation: 45,
+                                        minRotation: 45
+                                    }
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            },
+                            onHover: (event, elements) => {
+                                event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+                            },
+                            onClick: (event, elements) => {
+                                if (elements.length > 0) {
+                                    const index = elements[0].index;
+                                    const donnee = donneesTriees[index];
+                                    voirDetails(donnee.annee, donnee.mois);
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Fonction pour changer le type de graphique
+                function changerTypeGraphique() {
+                    if (currentData.length > 0) {
+                        creerGraphique(currentData);
+                    }
+                }
+
+                // Fonction pour actualiser le graphique
+                function actualiserGraphique() {
+                    if (currentData.length > 0) {
+                        creerGraphique(currentData);
+                    } else {
+                        chargerDonnees();
+                    }
+                }
+
                 function afficherTableau(donnees) {
                     const tbody = document.getElementById('corpsTableau');
                     tbody.innerHTML = '';
@@ -353,6 +494,9 @@
                     if (donnees.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Aucune donnée trouvée pour cette période</td></tr>';
                     }
+
+                    // Mettre à jour le graphique avec les nouvelles données
+                    creerGraphique(donnees);
                 }
 
                 function afficherTableauParType(donnees) {
