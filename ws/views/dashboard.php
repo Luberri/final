@@ -713,7 +713,10 @@
                             include __DIR__ . '/interets.php';
                         } elseif (isset($_GET['section']) && $_GET['section'] === 'liste-pdf') {
                             include __DIR__ . '/prets.php';
-                        } else {
+                        } elseif (isset($_GET['section']) && $_GET['section'] === 'stats') {
+                            include __DIR__ . '/fonds_disponibles.php';
+                        
+                        }else {
                         ?>
                             <h2 class="card-title">Tableau de Bord Principal</h2>
                             <p>Bienvenue dans votre espace administrateur. Sélectionnez une section dans le menu pour commencer votre travail.</p>

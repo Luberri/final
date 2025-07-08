@@ -20,8 +20,7 @@ class InteretsModel
                 SUM(interets_mois) as total_interets_mois, 
                 COUNT(DISTINCT pret_id) as nombre_prets_actifs
             FROM vue_interets_mensuels vm
-            JOIN status_pret sp ON sp.id_pret = vm.pret_id
-            WHERE DATE_ADD(sp.date, INTERVAL sp.delai MONTH) <= STR_TO_DATE(CONCAT(vm.annee, '-', LPAD(vm.mois,2,'0'), '-01'), '%Y-%m-%d')";
+            WHERE 1=1";
     $params = [];
 
     if ($annee_debut !== null && $annee_debut !== '') {
