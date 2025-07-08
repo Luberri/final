@@ -203,9 +203,6 @@
                     <td><strong>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(pret.mensualite_constante)} Ar</strong></td>
                     <td>
                         <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-info" onclick="voirDetails(${pret.id})" title="Voir détails">
-                                <i class="fas fa-eye"></i>
-                            </button>
                             <button class="btn btn-sm btn-danger" onclick="genererPDF(${pret.id})" title="Générer PDF">
                                 <i class="fas fa-file-pdf"></i>
                             </button>

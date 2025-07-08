@@ -1,12 +1,16 @@
+SET NAMES 'utf8mb4';
+SET CHARACTER SET utf8mb4;
+SET collation_connection = 'utf8mb4_general_ci';
+
 drop database tp_flight;
-create database tp_flight;
+create database tp_flight CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 use tp_flight;
 
 CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100),
     mdp VARCHAR(255)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table Client
 CREATE TABLE client (
@@ -16,7 +20,7 @@ CREATE TABLE client (
     mail VARCHAR(150),
     mdp VARCHAR(255),
     date_naissance DATE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table TypePret
 CREATE TABLE type_pret (
@@ -24,7 +28,7 @@ CREATE TABLE type_pret (
     nom VARCHAR(100),
     detail TEXT,
     taux DECIMAL(12,2)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table ClientDetail
 CREATE TABLE client_detail (
@@ -34,13 +38,13 @@ CREATE TABLE client_detail (
     revenu_mensuel DECIMAL(10,2),
     charge_mensuelle DECIMAL(10,2),
     FOREIGN KEY (client_id) REFERENCES client(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table Fonds
 CREATE TABLE fond (
     id INT AUTO_INCREMENT PRIMARY KEY,
     montant DECIMAL(12,2)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table FondDetail
 CREATE TABLE fond_detail (
@@ -48,7 +52,7 @@ CREATE TABLE fond_detail (
     fond_id INT,
     detail TEXT,
     FOREIGN KEY (fond_id) REFERENCES fond(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table FondHistorique
 CREATE TABLE fond_historique (
@@ -57,14 +61,14 @@ CREATE TABLE fond_historique (
     montant DECIMAL(12,2),
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (fond_detail_id) REFERENCES fond_detail(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table TypeRemboursement
 CREATE TABLE type_remboursement (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100),
     mois INT
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table StatusPret
 CREATE TABLE status_pret (
@@ -72,7 +76,7 @@ CREATE TABLE status_pret (
     id_pret INT,
     nom VARCHAR(100),
     date DATE default CURRENT_DATE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table Pret (CORRIGÉE - suppression de la référence status_pret_id qui n'existe pas)
 CREATE TABLE pret (
@@ -85,7 +89,7 @@ CREATE TABLE pret (
     FOREIGN KEY (client_id) REFERENCES client(id),
     FOREIGN KEY (type_remboursement_id) REFERENCES type_remboursement(id),
     FOREIGN KEY (type_pret_id) REFERENCES type_pret(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table Remboursement (maintenant que pret existe)
 CREATE TABLE remboursement (
@@ -95,7 +99,9 @@ CREATE TABLE remboursement (
     numero_mois INT,
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (pret_id) REFERENCES pret(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE status_pret ADD COLUMN delai INT DEFAULT 0;
 
 -- Insertion des données de base
 INSERT INTO type_pret (nom, detail, taux) VALUES
@@ -190,4 +196,125 @@ SELECT
     COUNT(DISTINCT pret_id) as nombre_prets_actifs
 FROM vue_interets_mensuels
 GROUP BY annee, mois
-ORDER BY annee, mois;
+ORDER BY annee DESC, mois DESC;
+
+-- Vue corrigée pour calculer les fonds disponibles par mois
+DROP VIEW IF EXISTS vue_fonds_disponibles;
+CREATE VIEW vue_fonds_disponibles AS
+SELECT 
+    YEAR(dates.date_mois) as annee,
+    MONTH(dates.date_mois) as mois,
+    dates.date_mois,
+    
+    -- Fonds initiaux disponibles (cumul des ajouts de fonds jusqu'à cette date)
+    COALESCE((
+        SELECT SUM(fh.montant)
+        FROM fond_historique fh
+        WHERE DATE(fh.date_heure) <= dates.date_mois
+    ), 0) as montant_initial,
+    
+    -- Montant total prêté ce mois (en utilisant la date de status_pret)
+    COALESCE((
+        SELECT SUM(p.montant)
+        FROM pret p
+        JOIN status_pret sp ON p.id = sp.id_pret
+        WHERE YEAR(sp.date) = YEAR(dates.date_mois) 
+        AND MONTH(sp.date) = MONTH(dates.date_mois)
+        AND sp.nom = 'Accordé'  -- ou le statut qui indique la création du prêt
+    ), 0) as montant_prete,
+    
+    -- Montant total remboursé ce mois
+    COALESCE((
+        SELECT SUM(r.montant)
+        FROM remboursement r
+        WHERE YEAR(r.date_heure) = YEAR(dates.date_mois) 
+        AND MONTH(r.date_heure) = MONTH(dates.date_mois)
+    ), 0) as montant_rembourse
+
+FROM (
+    -- Générer une série de dates mensuelles
+    SELECT DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL -seq MONTH), '%Y-%m-01') as date_mois
+    FROM (
+        SELECT 0 as seq UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION
+        SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION
+        SELECT 12 UNION SELECT 13 UNION SELECT 14 UNION SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION
+        SELECT 18 UNION SELECT 19 UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23
+    ) seq
+) dates
+ORDER BY dates.date_mois DESC;
+
+
+-- Données de test pour faire fonctionner la fonctionnalité fonds disponibles
+
+-- -- 1. Ajouter des données dans fond_historique (ajouts de fonds)
+INSERT INTO fond_historique (fond_detail_id, montant, date_heure) VALUES
+(1, 100000000, '2024-01-15 09:00:00'),  -- 100M en janvier
+(1, 75000000, '2024-03-20 10:30:00'),   -- 75M en mars
+(1, 50000000, '2024-06-10 14:00:00'),   -- 50M en juin
+(1, 25000000, '2024-09-05 11:15:00'),   -- 25M en septembre
+(1, 30000000, '2024-11-12 16:45:00');   -- 30M en novembre
+
+-- -- 2. Ajouter des prêts avec des dates différentes
+INSERT INTO pret (client_id, type_pret_id, montant, duree) VALUES
+(1, 1, 5000000, 12),   -- 5M, 12 mois
+(2, 2, 10000000, 24),  -- 10M, 24 mois
+(3, 1, 3000000, 18),   -- 3M, 18 mois
+(1, 3, 8000000, 36),   -- 8M, 36 mois
+(2, 2, 12000000, 24),  -- 12M, 24 mois
+(3, 1, 6000000, 12);   -- 6M, 12 mois
+
+-- -- 3. Ajouter des statuts pour ces prêts avec des dates étalées
+INSERT INTO status_pret (id_pret, nom, date) VALUES
+-- Prêts accordés en 2024
+(1, 'Accordé', '2024-02-10'),  -- Février
+(2, 'Accordé', '2024-04-15'),  -- Avril
+(3, 'Accordé', '2024-07-20'),  -- Juillet
+(4, 'Accordé', '2024-08-25'),  -- Août
+(5, 'Accordé', '2024-10-05'),  -- Octobre
+(6, 'Accordé', '2024-11-18');
+
+INSERT INTO status_pret (id_pret, nom, date) VALUES
+(1, 'En cours', '2024-02-11'),
+(2, 'En cours', '2024-04-16'),
+(3, 'En cours', '2024-07-21'),
+(4, 'En cours', '2024-08-26'),
+(5, 'En cours', '2024-10-06'),
+(6, 'En cours', '2024-11-19');
+
+-- -- 4. Ajouter des remboursements étalés sur plusieurs mois
+INSERT INTO remboursement (pret_id, montant, numero_mois, date_heure) VALUES
+-- -- Remboursements pour le prêt 1 (5M)
+
+(1, 450000, 1, '2024-03-10 00:00:00'),
+(1, 450000, 2, '2024-04-10 00:00:00'),
+(1, 450000, 3, '2024-05-10 00:00:00'),
+(1, 450000, 4, '2024-06-10 00:00:00'),
+(1, 450000, 5, '2024-07-10 00:00:00'),
+
+-- -- Remboursements pour le prêt 2 (10M)
+(2, 480000, 1, '2024-05-15 00:00:00'),
+(2, 480000, 2, '2024-06-15 00:00:00'),
+(2, 480000, 3, '2024-07-15 00:00:00'),
+(2, 480000, 4, '2024-08-15 00:00:00'),
+(2, 480000, 5, '2024-09-15 00:00:00'),
+(2, 480000, 6, '2024-10-15 00:00:00'),
+
+-- -- Remboursements pour le prêt 3 (3M)
+(3, 180000, 1, '2024-08-20 00:00:00'),
+(3, 180000, 2, '2024-09-20 00:00:00'),
+(3, 180000, 3, '2024-10-20 00:00:00'),
+(3, 180000, 4, '2024-11-20 00:00:00'),
+(3, 180000, 5, '2024-12-20 00:00:00'),
+
+-- -- Remboursements pour le prêt 4 (8M)
+(4, 250000, 1, '2024-09-25 00:00:00'),
+(4, 250000, 2, '2024-10-25 00:00:00'),
+(4, 250000, 3, '2024-11-25 00:00:00'),
+(4, 250000, 4, '2024-12-25 00:00:00'),
+
+-- -- Remboursements pour le prêt 5 (12M)
+(5, 580000, 1, '2024-11-05 00:00:00'),
+(5, 580000, 2, '2024-12-05 00:00:00'),
+
+-- Remboursements pour le prêt 6 (6M)
+(6, 520000, 1, '2024-12-18 00:00:00');

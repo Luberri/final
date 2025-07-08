@@ -653,10 +653,6 @@
                         <span class="nav-icon">💰</span>
                         <span class="nav-text">Liste Prêts PDF</span>
                     </a>
-                    <a href="#" class="nav-item" data-section="clients" onclick="window.location.href='?section=clients'; return false;">
-                        <span class="nav-icon">🏢</span>
-                        <span class="nav-text">Clients</span>
-                    </a>
                     <a href="#" class="nav-item" data-section="interest" onclick="window.location.href='?section=interest'; return false;">
                         <span class="nav-icon">📈</span>
                         <span class="nav-text">Intérêts</span>
@@ -697,8 +693,7 @@
 
             <div class="content-area">
                 <div class="welcome-section">
-                    <h1 class="welcome-title">Bienvenue sur AdminPro</h1>
-                    <p class="welcome-subtitle">Gérez votre système avec style et efficacité</p>
+                    <h1 class="welcome-title" style="color: #0f172a;">Bienvenue sur LIF banq</h1>
                 </div>
 
                 <div class="content-grid">
@@ -712,7 +707,10 @@
                             include __DIR__ . '/interets.php';
                         } elseif (isset($_GET['section']) && $_GET['section'] === 'liste-pdf') {
                             include __DIR__ . '/prets.php';
-                        } else {
+                        } elseif (isset($_GET['section']) && $_GET['section'] === 'stats') {
+                            include __DIR__ . '/fonds_disponibles.php';
+                        
+                        }else {
                         ?>
                             <h2 class="card-title">Tableau de Bord Principal</h2>
                             <p>Bienvenue dans votre espace administrateur. Sélectionnez une section dans le menu pour commencer votre travail.</p>
