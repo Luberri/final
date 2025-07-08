@@ -6,10 +6,10 @@ class PretController {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method === 'POST') {
             $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-            if (stripos($contentType, 'application/json') !== false) {
-                $rawData = file_get_contents('php://input');
-                $data = json_decode($rawData, true);
-                return (object) $data;
+            if (strpos($contentType, 'application/json') !== false) {
+                $rawData = file_get_contents("php://input");
+                $data = json_decode($rawData, false);
+                return $data ?: (object)[];
             } else {
                 return (object) $_POST;
             }

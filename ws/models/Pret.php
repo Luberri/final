@@ -13,6 +13,14 @@ class Pret {
             $data->type_pret_id,
             isset($data->assurance) ? $data->assurance : 0
         ]);
-        return $db->lastInsertId();
+        $idPret = $db->lastInsertId();
+
+        // Ajout dans status_pret avec la colonne delai
+        $nom = isset($data->nom_type_pret) ? $data->nom_type_pret : null;
+        $delai = isset($data->delai_premier) ? intval($data->delai_premier) : 0;
+        $stmt2 = $db->prepare("INSERT INTO status_pret (id_pret, nom, date, delai) VALUES (?, ?, curdate(), ?)");
+        $stmt2->execute([$idPret, $nom, $delai]);
+
+        return $idPret;
     }
 }

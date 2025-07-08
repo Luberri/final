@@ -14,33 +14,37 @@ class InteretsModel
      */
   public function getInteretsAvecFiltre($annee_debut = null, $mois_debut = null, $annee_fin = null, $mois_fin = null)
 {
-    $sql = "SELECT * FROM vue_interets_par_periode WHERE 1=1";
+    $sql = "SELECT 
+                annee, 
+                mois, 
+                SUM(interets_mois) as total_interets_mois, 
+                COUNT(DISTINCT pret_id) as nombre_prets_actifs
+            FROM vue_interets_mensuels vm
+            JOIN status_pret sp ON sp.id_pret = vm.pret_id
+            WHERE DATE_ADD(sp.date, INTERVAL sp.delai MONTH) <= STR_TO_DATE(CONCAT(vm.annee, '-', LPAD(vm.mois,2,'0'), '-01'), '%Y-%m-%d')";
     $params = [];
 
     if ($annee_debut !== null && $annee_debut !== '') {
         if ($mois_debut !== null && $mois_debut !== '') {
             $sql .= " AND (annee > :annee_debut OR (annee = :annee_debut AND mois >= :mois_debut))";
-            $params[':mois_debut'] = (int)$mois_debut; // Convertir en entier
+            $params[':mois_debut'] = (int)$mois_debut;
         } else {
             $sql .= " AND annee >= :annee_debut";
         }
-        $params[':annee_debut'] = (int)$annee_debut; // Convertir en entier
+        $params[':annee_debut'] = (int)$annee_debut;
     }
 
     if ($annee_fin !== null && $annee_fin !== '') {
         if ($mois_fin !== null && $mois_fin !== '') {
             $sql .= " AND (annee < :annee_fin OR (annee = :annee_fin AND mois <= :mois_fin))";
-            $params[':mois_fin'] = (int)$mois_fin; // Convertir en entier
+            $params[':mois_fin'] = (int)$mois_fin;
         } else {
             $sql .= " AND annee <= :annee_fin";
         }
-        $params[':annee_fin'] = (int)$annee_fin; // Convertir en entier
+        $params[':annee_fin'] = (int)$annee_fin;
     }
 
-    $sql .= " ORDER BY annee DESC, mois DESC";
-
-    error_log("Requête SQL: $sql");
-    error_log("Paramètres: " . print_r($params, true));
+    $sql .= " GROUP BY annee, mois ORDER BY annee DESC, mois DESC";
 
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute($params);
