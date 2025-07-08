@@ -2,162 +2,114 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Ajout d'un prêt</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajout d'un prêt</title>
     <style>
-        /* Beau CSS pour le formulaire et la simulation */
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%);
-            min-height: 100vh;
-            margin: 0;
-        }
-
         .container {
-            max-width: 480px;
-            margin: 48px auto;
-            background: #fff;
-            padding: 32px 28px 28px 28px;
-            border-radius: 18px;
-            box-shadow: 0 6px 32px rgba(0, 123, 255, 0.08), 0 1.5px 6px rgba(0,0,0,0.05);
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            max-width: 600px;
+            width: 100%;
         }
-
         h2 {
+            font-size: 1.5rem;
+            color: #1a202c;
             text-align: center;
-            color: #2563eb;
-            margin-bottom: 24px;
-            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
         }
-
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
         label {
-            display: block;
-            margin-top: 18px;
+            font-size: 0.875rem;
+            color: #2d3748;
             font-weight: 500;
-            color: #22223b;
-            letter-spacing: 0.5px;
         }
-
-        input, select {
+        select, input[type="number"], input[type="text"] {
             width: 100%;
-            padding: 10px 12px;
-            margin-top: 6px;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
             border-radius: 6px;
-            border: 1px solid #b6c4e0;
-            background: #f6f8fa;
-            font-size: 15px;
-            transition: border 0.2s;
-            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-
-        input:focus, select:focus {
-            border: 1.5px solid #2563eb;
+        select:focus, input:focus {
             outline: none;
-            background: #eef2fb;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
         }
-
         button {
-            margin-top: 22px;
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
-            color: #fff;
+            padding: 0.75rem;
             border: none;
             border-radius: 6px;
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 1rem;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-            transition: background 0.2s, transform 0.1s;
+            transition: background-color 0.2s;
         }
-
-        button:hover {
-            background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 100%);
-            transform: translateY(-2px) scale(1.01);
-        }
-
-        #taux-display {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #2563eb;
-            font-size: 16px;
-            letter-spacing: 0.5px;
-            text-align: right;
-        }
-
-        #assurance-group {
-            margin-top: 10px;
-            padding: 10px 12px;
-            background: #f1f5fb;
-            border-radius: 6px;
-            border: 1px solid #e0e7ff;
-        }
-
-        .message {
-            margin-top: 18px;
-            text-align: center;
-            font-size: 15px;
-        }
-
-        #error-message.error, #simulation-result .error {
-            color: #b91c1c;
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
-            border-radius: 5px;
-            padding: 8px 0;
-            margin: 12px 0;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        #simulation-result {
-            margin-top: 32px;
-            animation: fadeIn 0.6s;
-        }
-
-        #simulation-result h3 {
-            text-align: center;
-            color: #2563eb;
-            margin-bottom: 18px;
-            font-size: 22px;
-            letter-spacing: 1px;
-        }
-
-        #simulation-result table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-            background: #f8fafc;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
-        }
-
-        #simulation-result th, #simulation-result td {
-            border: 1px solid #e5e7eb;
-            padding: 10px 8px;
-            text-align: center;
-            font-size: 15px;
-        }
-
-        #simulation-result th {
-            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+        button[type="button"] {
+            background-color: #6b7280;
             color: #fff;
+        }
+        button[type="submit"] {
+            background-color: #3182ce;
+            color: #fff;
+        }
+        button:hover {
+            filter: brightness(90%);
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+        .message {
+            text-align: center;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+        .success {
+            color: #2f855a;
+        }
+        .error {
+            color: #c53030;
+        }
+        #taux-display {
+            margin-top: 0.5rem;
+            font-weight: bold;
+            color: #3182ce;
+        }
+        #assurance-group {
+            margin-top: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: right;
+            font-size: 0.875rem;
+        }
+        th {
+            background-color: #edf2f7;
             font-weight: 600;
-            letter-spacing: 0.5px;
+            color: #2d3748;
         }
-
-        #simulation-result tr:nth-child(even) td {
-            background: #f1f5fb;
+        tbody tr:nth-child(even) {
+            background-color: #f7fafc;
         }
-
-        #simulation-result tr:hover td {
-            background: #e0e7ff;
-            transition: background 0.2s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px);}
-            to { opacity: 1; transform: translateY(0);}
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            .button-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -165,41 +117,61 @@
     <div class="container">
         <h2>Ajouter un prêt</h2>
         <form id="pretForm">
-            <label for="client_id">Client</label>
-            <select id="client_id" name="client_id" required></select>
-
-            <label for="montant">Montant</label>
-            <input type="number" id="montant" name="montant" required min="1" step="0.01">
-
-            <label for="duree">Durée (mois)</label>
-            <input type="number" id="duree" name="duree" required min="1">
-
-            <label for="type_remboursement_id">Type de remboursement</label>
-            <select id="type_remboursement_id" name="type_remboursement_id" required></select>
-
-            <label for="type_pret_id">Type de prêt</label>
-            <select id="type_pret_id" name="type_pret_id" required></select>
-            <div id="taux-display" style="margin-top:8px; font-weight:bold; color:#007bff;"></div>
-
-            <label for="delai_premier">Délai avant 1er remboursement (mois)</label>
-            <input type="number" id="delai_premier" name="delai_premier" min="0" value="0" style="margin-bottom:8px;">
-
-            <label>
-                <input type="checkbox" id="has_assurance" onchange="document.getElementById('assurance-group').style.display = this.checked ? 'block' : 'none';">
-                Ajouter une assurance
-            </label>
-            <div id="assurance-group" style="display:none;">
-                <label for="assurance">Assurance (% par an)</label>
-                <input type="number" id="assurance" name="assurance" placeholder="Ex: 0.5 pour 0,5%" min="0" max="100" step="0.01" value="0">
+            <div>
+                <label for="client_id">Client</label>
+                <select id="client_id" name="client_id" required></select>
             </div>
 
-            <button type="button" id="simulateur-btn">Simuler</button>
-            <button type="submit">Ajouter</button>
+            <div>
+                <label for="montant">Montant</label>
+                <input type="number" id="montant" name="montant" required min="1" step="0.01">
+            </div>
+
+            <div>
+                <label for="duree">Durée (mois)</label>
+                <input type="number" id="duree" name="duree" required min="1">
+            </div>
+
+            <div>
+                <label for="type_remboursement_id">Type de remboursement</label>
+                <select id="type_remboursement_id" name="type_remboursement_id" required></select>
+            </div>
+
+            <div>
+                <label for="type_pret_id">Type de prêt</label>
+                <select id="type_pret_id" name="type_pret_id" required></select>
+                <div id="taux-display"></div>
+            </div>
+
+            <div>
+                <label for="delai_premier">Délai avant 1er remboursement (mois)</label>
+                <input type="number" id="delai_premier" name="delai_premier" min="0" value="0">
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" id="has_assurance" onchange="document.getElementById('assurance-group').style.display = this.checked ? 'block' : 'none';">
+                    Ajouter une assurance
+                </label>
+                <div id="assurance-group" style="display:none;">
+                    <label for="assurance">Assurance (% par an)</label>
+                    <input type="number" id="assurance" name="assurance" placeholder="Ex: 0.5 pour 0,5%" min="0" max="100" step="0.01" value="0">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="simulateur-btn">Simuler</button>
+                <button type="submit">Ajouter</button>
+            </div>
         </form>
-        <div class="message" id="message"></div>
-        <div id="error-message" class="error"></div>
+
+        <div class="message">
+            <div id="message"></div>
+            <div id="error-message" class="error"></div>
+        </div>
         <div id="simulation-result"></div>
     </div>
+
     <script>
     window.apiBase = window.apiBase || "http://localhost/final/ws";
 
@@ -229,7 +201,7 @@
             });
         });
 
-    // Stockage des taux par type de prêt (rempli dynamiquement)
+    // Stockage des taux par type de prêt
     let typePretTauxMap = {};
 
     // Charger la liste des types de prêt et remplir le mapping id => taux
@@ -242,10 +214,8 @@
                 option.value = e.id;
                 option.textContent = `${e.nom} (${e.taux}%)`;
                 select.appendChild(option);
-                // Stocker le taux mensuel (taux annuel / 12 / 100)
                 typePretTauxMap[e.id] = parseFloat(e.taux) / 12 / 100;
             });
-            // Afficher le taux du premier type de prêt si sélectionné
             if (select.value) updateTauxDisplay(select.value);
         });
 
@@ -269,14 +239,12 @@
     document.getElementById('pretForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
-        // Ajoute l'assurance seulement si activée
         const hasAssurance = document.getElementById('has_assurance').checked;
         if (hasAssurance) {
             formData.set('assurance', document.getElementById('assurance').value || 0);
         } else {
             formData.set('assurance', 0);
         }
-        // Correction : transformer FormData en objet simple pour POST JSON
         const data = {};
         formData.forEach((value, key) => {
             data[key] = value;
@@ -296,21 +264,21 @@
                 dataRes = JSON.parse(text);
             } catch (e) {
                 document.getElementById('message').textContent = 'Réponse non JSON: ' + text;
-                document.getElementById('message').style.color = 'red';
+                document.getElementById('message').className = 'error';
                 return;
             }
             if(dataRes.error) {
                 document.getElementById('message').textContent = (dataRes.error || 'Erreur') + ' | Debug: ' + JSON.stringify(dataRes);
-                document.getElementById('message').style.color = 'red';
+                document.getElementById('message').className = 'error';
             } else {
                 document.getElementById('message').textContent = (dataRes.message || 'Ajout réussi') + ' | Debug: ' + JSON.stringify(dataRes);
-                document.getElementById('message').style.color = 'green';
+                document.getElementById('message').className = 'success';
                 if(dataRes.id) document.getElementById('pretForm').reset();
             }
         })
         .catch((err) => {
             document.getElementById('message').textContent = 'Erreur lors de l\'ajout: ' + err;
-            document.getElementById('message').style.color = 'red';
+            document.getElementById('message').className = 'error';
         });
     });
 
@@ -327,10 +295,9 @@
     function genererAmortissement(capital, tauxMensuel, duree, mensualite, primeAssurance, delaiPremier) {
         let tableau = [];
         let capitalRestant = capital;
-        // Ajout des mois de différé (pas de remboursement, mais intérêts courus)
         for (let mois = 1; mois <= delaiPremier; mois++) {
             let interets = capitalRestant * tauxMensuel;
-            capitalRestant += interets; // Les intérêts s'ajoutent au capital (capitalisation)
+            capitalRestant += interets;
             tableau.push({
                 mois,
                 capitalRestant: Math.max(capitalRestant, 0),
@@ -341,7 +308,6 @@
                 montantTotal: primeAssurance > 0 ? primeAssurance : 0
             });
         }
-        // Puis les remboursements classiques
         for (let mois = delaiPremier + 1; mois <= duree + delaiPremier; mois++) {
             let interets = capitalRestant * tauxMensuel;
             let amortissement = mensualite - interets;
@@ -368,7 +334,7 @@
         } = donnees;
 
         let html = `
-            <h3>Simulation de prêt</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #2d3748; margin-bottom: 1rem;">Simulation de prêt</h3>
             <table>
                 <tr>
                     <th>Capital emprunté</th>
@@ -387,8 +353,7 @@
                     <td>${coutTotalAssurance.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>
                 </tr>
             </table>
-            <br>
-            <div style="overflow-x:auto">
+            <div style="overflow-x: auto; margin-top: 1rem;">
             <table>
                 <thead>
                     <tr>
@@ -433,7 +398,6 @@
         const resultDiv = document.getElementById('simulation-result');
         resultDiv.innerHTML = '';
 
-        // Validation
         if (isNaN(capital) || capital <= 0) {
             document.getElementById('error-message').textContent = 'Veuillez saisir un capital valide.';
             return;
@@ -455,9 +419,8 @@
             return;
         }
 
-        // Attention : la mensualité doit être calculée sur la durée réelle de remboursement (hors différé)
         const mensualite = calculerMensualite(
-            capital * Math.pow(1 + tauxMensuel, delaiPremier), // capitalisé pendant le différé
+            capital * Math.pow(1 + tauxMensuel, delaiPremier),
             tauxMensuel,
             duree
         );
