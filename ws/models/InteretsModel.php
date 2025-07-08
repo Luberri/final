@@ -12,43 +12,43 @@ class InteretsModel
     /**
      * Récupère les intérêts gagnés avec filtres de période
      */
-  public function getInteretsAvecFiltre($annee_debut = null, $mois_debut = null, $annee_fin = null, $mois_fin = null)
-{
-    $sql = "SELECT 
+    public function getInteretsAvecFiltre($annee_debut = null, $mois_debut = null, $annee_fin = null, $mois_fin = null)
+    {
+        $sql = "SELECT 
                 annee, 
                 mois, 
                 SUM(interets_mois) as total_interets_mois, 
                 COUNT(DISTINCT pret_id) as nombre_prets_actifs
             FROM vue_interets_mensuels vm
             WHERE 1=1";
-    $params = [];
+        $params = [];
 
-    if ($annee_debut !== null && $annee_debut !== '') {
-        if ($mois_debut !== null && $mois_debut !== '') {
-            $sql .= " AND (annee > :annee_debut OR (annee = :annee_debut AND mois >= :mois_debut))";
-            $params[':mois_debut'] = (int)$mois_debut;
-        } else {
-            $sql .= " AND annee >= :annee_debut";
+        if ($annee_debut !== null && $annee_debut !== '') {
+            if ($mois_debut !== null && $mois_debut !== '') {
+                $sql .= " AND (annee > :annee_debut OR (annee = :annee_debut AND mois >= :mois_debut))";
+                $params[':mois_debut'] = (int)$mois_debut;
+            } else {
+                $sql .= " AND annee >= :annee_debut";
+            }
+            $params[':annee_debut'] = (int)$annee_debut;
         }
-        $params[':annee_debut'] = (int)$annee_debut;
-    }
 
-    if ($annee_fin !== null && $annee_fin !== '') {
-        if ($mois_fin !== null && $mois_fin !== '') {
-            $sql .= " AND (annee < :annee_fin OR (annee = :annee_fin AND mois <= :mois_fin))";
-            $params[':mois_fin'] = (int)$mois_fin;
-        } else {
-            $sql .= " AND annee <= :annee_fin";
+        if ($annee_fin !== null && $annee_fin !== '') {
+            if ($mois_fin !== null && $mois_fin !== '') {
+                $sql .= " AND (annee < :annee_fin OR (annee = :annee_fin AND mois <= :mois_fin))";
+                $params[':mois_fin'] = (int)$mois_fin;
+            } else {
+                $sql .= " AND annee <= :annee_fin";
+            }
+            $params[':annee_fin'] = (int)$annee_fin;
         }
-        $params[':annee_fin'] = (int)$annee_fin;
+
+        $sql .= " GROUP BY annee, mois ORDER BY annee DESC, mois DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    $sql .= " GROUP BY annee, mois ORDER BY annee DESC, mois DESC";
-
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
     /**
      * Récupère le détail des intérêts par prêt pour une période
      */

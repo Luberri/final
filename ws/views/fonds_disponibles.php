@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,21 +12,36 @@
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
         }
+
         .table-responsive {
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
+
         .filter-card {
             background: #f8f9fa;
             border-left: 4px solid #28a745;
         }
+
         .loading {
             display: none;
             text-align: center;
             padding: 20px;
         }
-        .positive { color: #28a745; font-weight: bold; }
-        .negative { color: #dc3545; font-weight: bold; }
-        .neutral { color: #6c757d; font-weight: bold; }
+
+        .positive {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .negative {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .neutral {
+            color: #6c757d;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -162,7 +178,6 @@
                                         <th>Montant Remboursé</th>
                                         <th>Montant Disponible</th>
                                         <th>Statut</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="corpsTableau">
@@ -276,13 +291,13 @@
                 .then(data => {
                     if (data.success) {
                         const stats = data.data;
-                        document.getElementById('totalFondsInitiaux').textContent = 
+                        document.getElementById('totalFondsInitiaux').textContent =
                             formatMontant(stats.total_fonds_initiaux || 0);
-                        document.getElementById('totalPrete').textContent = 
+                        document.getElementById('totalPrete').textContent =
                             formatMontant(stats.total_prete || 0);
-                        document.getElementById('totalRembourse').textContent = 
+                        document.getElementById('totalRembourse').textContent =
                             formatMontant(stats.total_rembourse || 0);
-                        document.getElementById('montantDisponible').textContent = 
+                        document.getElementById('montantDisponible').textContent =
                             formatMontant(stats.montant_total_disponible || 0);
                     }
                 })
@@ -296,12 +311,13 @@
             donnees.forEach(row => {
                 const tr = document.createElement('tr');
                 const nomsMois = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-                    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+                ];
 
                 const montantDisponible = parseFloat(row.montant_disponible);
                 let statutClass = 'neutral';
                 let statutText = 'Neutre';
-                
+
                 if (montantDisponible > 0) {
                     statutClass = 'positive';
                     statutText = 'Disponible';
@@ -317,17 +333,12 @@
                     <td><strong>${formatMontant(row.total_rembourse)}</strong></td>
                     <td><strong class="${statutClass}">${formatMontant(row.montant_disponible)}</strong></td>
                     <td><span class="badge bg-${montantDisponible >= 0 ? 'success' : 'danger'}">${statutText}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-info" onclick="voirDetails(${row.annee}, ${row.mois})">
-                            <i class="fas fa-eye"></i> Détails
-                        </button>
-                    </td>
                 `;
                 tbody.appendChild(tr);
             });
 
             if (donnees.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Aucune donnée trouvée pour cette période</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Aucune donnée trouvée pour cette période</td></tr>';
             }
         }
 
@@ -339,7 +350,8 @@
             const dataDisponible = [];
 
             const nomsMois = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
-                'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+            ];
 
             const donneesTriees = [...donnees].sort((a, b) => {
                 if (a.annee === b.annee) {
@@ -368,8 +380,7 @@
                 type: typeGraphique,
                 data: {
                     labels: labels,
-                    datasets: [
-                        {
+                    datasets: [{
                             label: 'Fonds Initiaux (Ar)',
                             data: dataFonds,
                             borderColor: 'rgb(40, 167, 69)',
@@ -432,11 +443,6 @@
             }).format(montant) + ' Ar';
         }
 
-        function voirDetails(annee, mois) {
-            // Implémentation pour voir les détails d'un mois spécifique
-            alert(`Détails pour ${mois}/${annee} - Fonctionnalité à implémenter`);
-        }
-
         function resetFilters() {
             document.getElementById('filtreForm').reset();
             chargerDonnees();
@@ -461,4 +467,5 @@
         }
     </script>
 </body>
+
 </html>

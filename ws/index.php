@@ -38,5 +38,7 @@ require_once 'routes/interets.php';
 require_once 'routes/form_select_routes.php';
 require_once 'routes/Pret_routes.php';
 require_once 'routes/fonds_disponibles.php';
+require_once 'routes/simulation_routes.php'; // Ajoutez cette ligne
+
 
 Flight::start();

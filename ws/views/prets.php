@@ -127,24 +127,6 @@
         </div>
     </div>
 
-    <!-- Modal pour les détails du prêt -->
-    <div class="modal fade" id="modalDetails" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Détails du Prêt</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalContent">
-                    <!-- Le contenu sera chargé dynamiquement -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let currentData = [];
@@ -203,9 +185,6 @@
                     <td><strong>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(pret.mensualite_constante)} Ar</strong></td>
                     <td>
                         <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-info" onclick="voirDetails(${pret.id})" title="Voir détails">
-                                <i class="fas fa-eye"></i>
-                            </button>
                             <button class="btn btn-sm btn-danger" onclick="genererPDF(${pret.id})" title="Générer PDF">
                                 <i class="fas fa-file-pdf"></i>
                             </button>
@@ -234,96 +213,6 @@
             document.getElementById('interetsTotal').textContent = new Intl.NumberFormat('fr-FR', {
                 minimumFractionDigits: 2
             }).format(interetsTotal) + ' Ar';
-        }
-
-        function voirDetails(pretId) {
-            fetch(`${apiBase}api/prets/details?id=${pretId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        afficherModalDetails(data.data);
-                    } else {
-                        alert('Erreur: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors du chargement des détails');
-                });
-        }
-
-        function afficherModalDetails(details) {
-            const modalContent = document.getElementById('modalContent');
-            const pret = details.pret;
-            const stats = details.statistiques;
-
-            let html = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Informations Client</h6>
-                        <table class="table table-sm">
-                            <tr><td><strong>Nom:</strong></td><td>${pret.client_nom} ${pret.client_prenom}</td></tr>
-                            <tr><td><strong>Email:</strong></td><td>${pret.client_mail}</td></tr>
-                            <tr><td><strong>Profession:</strong></td><td>${pret.profession || 'Non renseignée'}</td></tr>
-                            <tr><td><strong>Revenu:</strong></td><td>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(pret.revenu_mensuel || 0)} Ar</td></tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Détails du Prêt</h6>
-                        <table class="table table-sm">
-                            <tr><td><strong>Type:</strong></td><td>${pret.type_pret}</td></tr>
-                            <tr><td><strong>Montant:</strong></td><td>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(pret.montant)} Ar</td></tr>
-                            <tr><td><strong>Taux:</strong></td><td>${pret.taux}%</td></tr>
-                            <tr><td><strong>Durée:</strong></td><td>${pret.duree} mois</td></tr>
-                            <tr><td><strong>Total intérêts:</strong></td><td>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(stats.total_interets)} Ar</td></tr>
-                        </table>
-                    </div>
-                </div>
-            `;
-
-            if (details.tableau_amortissement && details.tableau_amortissement.length > 0) {
-                html += `
-                    <div class="mt-3">
-                        <h6>Tableau d'Amortissement (Aperçu - 5 premiers mois)</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Mois</th>
-                                        <th>Capital Restant</th>
-                                        <th>Intérêts</th>
-                                        <th>Mensualité</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                `;
-
-                details.tableau_amortissement.slice(0, 5).forEach(echeance => {
-                    html += `
-                        <tr>
-                            <td>${echeance.numero_mois}</td>
-                            <td>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(echeance.capital_restant)} Ar</td>
-                            <td>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(echeance.interets_mois)} Ar</td>
-                            <td>${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(echeance.mensualite_constante)} Ar</td>
-                            <td>${new Date(echeance.date_mois).toLocaleDateString('fr-FR')}</td>
-                        </tr>
-                    `;
-                });
-
-                html += `
-                                </tbody>
-                            </table>
-                        </div>
-                        <p class="text-muted"><small>Affichage des 5 premiers mois seulement. Le PDF complet contient tous les détails.</small></p>
-                    </div>
-                `;
-            }
-
-            modalContent.innerHTML = html;
-
-            const modal = new bootstrap.Modal(document.getElementById('modalDetails'));
-            modal.show();
         }
 
         function genererPDF(pretId) {

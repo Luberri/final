@@ -14,7 +14,7 @@ class InteretsController
     /**
      * Récupère les intérêts avec filtres
      */
-    
+
 
     public function getInteretsAvecFiltre()
     {
@@ -79,7 +79,7 @@ class InteretsController
     }
 
     /**
-     * Récupère les statistiques globales
+     * Récupère les  globales
      */
     public function getStatistiques()
     {
