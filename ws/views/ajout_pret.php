@@ -113,9 +113,17 @@
                 if(data.id) this.reset();
             }
         })
-        .catch(() => {
-            document.getElementById('message').textContent = 'Erreur lors de l\'ajout';
-            
+        .catch(async (err) => {
+            let msg = 'Erreur lors de l\'ajout';
+            if (err && err.message) msg += ' : ' + err.message;
+            // Essaye de lire la réponse d'erreur du serveur
+            if (err && err.response) {
+                try {
+                    const data = await err.response.json();
+                    if (data && data.error) msg = data.error;
+                } catch {}
+            }
+            document.getElementById('message').textContent = msg;
             document.getElementById('message').style.color = 'red';
         });
     });

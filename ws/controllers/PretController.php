@@ -21,6 +21,7 @@ class PretController {
             $id = Pret::create($data);
             Flight::json(['message' => 'Prêt ajouté', 'id' => $id]);
         } catch (Exception $e) {
+            echo '<pre style="color:red;">' . $e->getMessage() . '</pre>';
             Flight::json(['error' => 'Erreur lors de l\'ajout du prêt : ' . $e->getMessage()], 500);
         }
     }
