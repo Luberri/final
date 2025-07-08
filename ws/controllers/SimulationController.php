@@ -39,15 +39,6 @@ class SimulationController
                 return;
             }
 
-            // Validation des valeurs numériques
-            if (!is_numeric($data->client_id) || !is_numeric($data->montant) || !is_numeric($data->duree) || !is_numeric($data->type_pret_id)) {
-                Flight::json([
-                    'success' => false,
-                    'error' => 'Les valeurs doivent être numériques'
-                ], 400);
-                return;
-            }
-
             $id = Simulation::create($data);
             
             Flight::json([
