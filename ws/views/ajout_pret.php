@@ -281,6 +281,9 @@
         formData.forEach((value, key) => {
             data[key] = value;
         });
+        // Ajoute le nom du type de prêt pour status_pret
+        const typePretSelect = document.getElementById('type_pret_id');
+        data.nom_type_pret = typePretSelect.options[typePretSelect.selectedIndex].text.split(' (')[0];
         fetch(window.apiBase + '/prets', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
