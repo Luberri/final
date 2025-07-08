@@ -1,0 +1,9 @@
+fonctionnalite 
+
+- cote admin ajout de fond dans l'etablissement(IOty) 
+- Ajout de fond dans l'établissement financier (EF) (IOty)
+- création type de prêt avec différent taux (IOTY) 
+- gestion de prêt pour les clients (nouveau pret)(LUBERRI )
+- créer un tableau pour afficher les intêrets gagnés pour mois pour l'EF. (luberri)- 
+- Mettre un filtre (mois et année début ) et mois/année fin
+Créer un graphique à partir du tableau(Luberri)
