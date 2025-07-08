@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdminPro Dashboard</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
-        
+
         :root {
             --primary: #6366f1;
             --secondary: #8b5cf6;
@@ -17,7 +18,7 @@
             --dark: #0f172a;
             --light: #f8fafc;
             --glass: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255,255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.2);
         }
 
         * {
@@ -459,8 +460,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .pulse {
@@ -468,9 +474,17 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         /* Table Styles */
@@ -491,7 +505,8 @@
             color: var(--dark);
         }
 
-        th, td {
+        th,
+        td {
             padding: 1rem 1.5rem;
             text-align: left;
             transition: all 0.3s ease;
@@ -574,7 +589,7 @@
             .dashboard {
                 grid-template-columns: 1fr;
             }
-            
+
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -584,15 +599,15 @@
                 transform: translateX(-100%);
                 z-index: 1000;
             }
-            
+
             .sidebar.mobile-open {
                 transform: translateX(0);
             }
-            
+
             .content-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .search-input {
                 width: 200px;
             }
@@ -603,7 +618,8 @@
                 font-size: 0.85rem;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 0.75rem 1rem;
             }
 
@@ -619,6 +635,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard" id="dashboard">
         <aside class="sidebar" id="sidebar">
@@ -627,15 +644,15 @@
                     <div class="logo-icon">⚡</div>
                     <span class="logo-text">AdminPro</span>
                 </div>
-                
+
                 <nav class="nav-menu">
                     <a href="#" class="nav-item active" data-section="dashboard" onclick="window.location.href='?section=dashboard'; return false;">
                         <span class="nav-icon">🏠</span>
                         <span class="nav-text">Dashboard</span>
                     </a>
-                    <a href="#" class="nav-item" data-section="loans" onclick="window.location.href='?section=loans'; return false;">
+                    <a href="#" class="nav-item" data-section="liste-pdf" onclick="window.location.href='?section=liste-pdf'; return false;">
                         <span class="nav-icon">💰</span>
-                        <span class="nav-text">Prêts</span>
+                        <span class="nav-text">Liste Prêts PDF</span>
                     </a>
                     <a href="#" class="nav-item" data-section="clients" onclick="window.location.href='?section=clients'; return false;">
                         <span class="nav-icon">🏢</span>
@@ -670,7 +687,7 @@
                         <input type="text" class="search-input" placeholder="Rechercher...">
                     </div>
                 </div>
-                
+
                 <div class="user-profile">
                     <div class="notifications pulse">🔔</div>
                     <div class="user-avatar" id="userAvatar">A</div>
@@ -694,10 +711,12 @@
                             include __DIR__ . '/ajout_fond.php';
                         } elseif (isset($_GET['section']) && $_GET['section'] === 'interest') {
                             include __DIR__ . '/interets.php';
+                        } elseif (isset($_GET['section']) && $_GET['section'] === 'liste-pdf') {
+                            include __DIR__ . '/prets.php';
                         } else {
                         ?>
-                        <h2 class="card-title">Tableau de Bord Principal</h2>
-                        <p>Bienvenue dans votre espace administrateur. Sélectionnez une section dans le menu pour commencer votre travail.</p>
+                            <h2 class="card-title">Tableau de Bord Principal</h2>
+                            <p>Bienvenue dans votre espace administrateur. Sélectionnez une section dans le menu pour commencer votre travail.</p>
                         <?php } ?>
                     </div>
                 </div>
@@ -719,7 +738,7 @@
         function toggleSidebar() {
             sidebarCollapsed = !sidebarCollapsed;
             document.getElementById('dashboard').classList.toggle('collapsed', sidebarCollapsed);
-            
+
             if (window.innerWidth <= 1024) {
                 document.getElementById('sidebar').classList.toggle('mobile-open');
             }
@@ -731,7 +750,7 @@
                 const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
                 let current = 0;
                 const increment = target / 50;
-                
+
                 const updateCounter = () => {
                     if (current < target) {
                         current += increment;
@@ -741,7 +760,7 @@
                         counter.textContent = counter.textContent.includes('€') ? '€12.5k' : target.toString();
                     }
                 };
-                
+
                 setTimeout(updateCounter, Math.random() * 1000);
             });
         }
@@ -781,7 +800,7 @@
         function loadEtudiants() {
             setActiveNavItem('students');
             updateContent('Gestion des Étudiants', '<div class="loading"></div> Chargement des données...');
-            
+
             ajax('GET', '/etudiants', null, function(response) {
                 let tableRows = '';
                 response.etudiants.forEach(student => {
@@ -847,11 +866,11 @@
         function loadPrets() {
             setActiveNavItem('loans');
             updateContent('Gestion des Prêts', '<div class="loading"></div> Chargement...');
-            
+
             fetch('ajout_fond.php')
                 .then(response => response.text())
                 .then(html => updateContent('Gestion des Prêts', html))
-                .catch(() => updateContent('Gestion des Prêts', 
+                .catch(() => updateContent('Gestion des Prêts',
                     '<div style="background: linear-gradient(135deg, #fee2e2, transparent); padding: 1rem; border-radius: 12px; color: #dc2626);"><span style="color: #dc2626;">❌ Erreur de chargement</span></div>'
                 ));
         }
@@ -881,6 +900,11 @@
             updateContent('Ajouter un Prêt', '<h4>Modifier en développement...</h4><p>🚧</p>');
         }
 
+        function loadListePDF() {
+            setActiveNavItem('liste-pdf');
+            window.location.href = '?section=liste-pdf';
+        }
+
         function showQuickActions() {
             alert('Actions rapides à venir! ⚡');
         }
@@ -895,7 +919,9 @@
                         const response = JSON.parse(xhr.responseText);
                         callback(response);
                     } catch (e) {
-                        callback({ error: 'Erreur de communication' });
+                        callback({
+                            error: 'Erreur de communication'
+                        });
                     }
                 }
             };
@@ -903,4 +929,3 @@
         }
     </script>
 </body>
-</html>

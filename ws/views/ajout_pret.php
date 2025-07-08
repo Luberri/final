@@ -176,7 +176,7 @@
     window.apiBase = window.apiBase || "http://localhost/final/ws";
 
     // Charger la liste des clients
-    fetch(window.apiBase + '/clients')
+    fetch(window.apiBase + '/api/clients')
         .then(res => res.json())
         .then(data => {
             const select = document.getElementById('client_id');
@@ -189,7 +189,7 @@
         });
 
     // Charger la liste des types de remboursement
-    fetch(window.apiBase + '/type_remboursements')
+    fetch(window.apiBase + '/api/type_remboursements')
         .then(res => res.json())
         .then(data => {
             const select = document.getElementById('type_remboursement_id');
@@ -205,7 +205,7 @@
     let typePretTauxMap = {};
 
     // Charger la liste des types de prêt et remplir le mapping id => taux
-    fetch(window.apiBase + '/type_prets')
+    fetch(window.apiBase + '/api/type_prets')
         .then(res => res.json())
         .then(data => {
             const select = document.getElementById('type_pret_id');
@@ -252,7 +252,7 @@
         // Ajoute le nom du type de prêt pour status_pret
         const typePretSelect = document.getElementById('type_pret_id');
         data.nom_type_pret = typePretSelect.options[typePretSelect.selectedIndex].text.split(' (')[0];
-        fetch(window.apiBase + '/prets', {
+        fetch(window.apiBase + '/api/prets', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

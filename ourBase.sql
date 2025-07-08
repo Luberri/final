@@ -139,7 +139,8 @@ INSERT INTO pret (client_id, montant, duree, type_remboursement_id, type_pret_id
 (2, 5000000, 24, 1, 2),  -- Prêt immobilier de 5M sur 24 mois  
 (3, 800000, 18, 1, 3);   -- Crédit auto de 800K sur 18 mois
 
--- Vue pour calculer les intérêts gagnés par mois selon le tableau d'amortissement
+-- Vue simplifiée pour calculer les intérêts mensuels
+DROP VIEW IF EXISTS vue_interets_mensuels;
 CREATE VIEW vue_interets_mensuels AS
 SELECT 
     p.id as pret_id,
@@ -147,55 +148,21 @@ SELECT
     c.prenom,
     p.montant as capital_emprunte,
     tp.taux as taux_annuel,
-    (tp.taux / 12) as taux_mensuel,
+    (tp.taux / 12 / 100) as taux_mensuel,
     p.duree,
-    -- Calcul de la mensualité constante selon la formule A = C × [i / (1 - (1 + i)^(-n))]
-    ROUND(
-        p.montant * (
-            (tp.taux / 12 / 100) / 
-            (1 - POWER(1 + (tp.taux / 12 / 100), -p.duree))
-        ), 2
-    ) as mensualite_constante,
-    
-    -- Génération des mois de 1 à durée du prêt
     mois.numero_mois,
-    
-    -- Capital restant au début du mois
-    ROUND(
-        p.montant * POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - 1) -
-        (
-            p.montant * (
-                (tp.taux / 12 / 100) / 
-                (1 - POWER(1 + (tp.taux / 12 / 100), -p.duree))
-            )
-        ) * 
-        (
-            (POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - 1) - 1) / 
-            (tp.taux / 12 / 100)
-        ), 2
-    ) as capital_restant,
-    
-    -- Intérêts du mois (capital restant × taux mensuel)
-    ROUND(
-        (
-            p.montant * POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - 1) -
-            (
-                p.montant * (
-                    (tp.taux / 12 / 100) / 
-                    (1 - POWER(1 + (tp.taux / 12 / 100), -p.duree))
-                )
-            ) * 
-            (
-                (POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - 1) - 1) / 
-                (tp.taux / 12 / 100)
-            )
-        ) * (tp.taux / 12 / 100), 2
-    ) as interets_mois,
-    
-    -- Date du mois (estimée à partir de la date de création du prêt)
     DATE_ADD(CURDATE(), INTERVAL (mois.numero_mois - 1) MONTH) as date_mois,
     YEAR(DATE_ADD(CURDATE(), INTERVAL (mois.numero_mois - 1) MONTH)) as annee,
-    MONTH(DATE_ADD(CURDATE(), INTERVAL (mois.numero_mois - 1) MONTH)) as mois
+    MONTH(DATE_ADD(CURDATE(), INTERVAL (mois.numero_mois - 1) MONTH)) as mois,
+    
+    -- Capital restant simplifié
+    ROUND(p.montant * POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - 1), 2) as capital_restant,
+    
+    -- Intérêts du mois = capital restant × taux mensuel
+    ROUND(p.montant * POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - 1) * (tp.taux / 12 / 100), 2) as interets_mois,
+    
+    -- Mensualité constante
+    ROUND(p.montant * ((tp.taux / 12 / 100) / (1 - POWER(1 + (tp.taux / 12 / 100), -p.duree))), 2) as mensualite_constante
 
 FROM pret p
 JOIN client c ON p.client_id = c.id
@@ -213,7 +180,8 @@ JOIN (
     SELECT 55 UNION SELECT 56 UNION SELECT 57 UNION SELECT 58 UNION SELECT 59 UNION SELECT 60
 ) mois ON mois.numero_mois <= p.duree;
 
--- Vue simplifiée pour afficher les intérêts totaux par mois/année
+-- Vue pour agréger les intérêts par période
+DROP VIEW IF EXISTS vue_interets_par_periode;
 CREATE VIEW vue_interets_par_periode AS
 SELECT 
     annee,
@@ -223,86 +191,3 @@ SELECT
 FROM vue_interets_mensuels
 GROUP BY annee, mois
 ORDER BY annee, mois;
-
-ALTER TABLE pret ADD COLUMN assurance DECIMAL(5,2) DEFAULT 0;
-ALTER TABLE status_pret ADD COLUMN delai INT DEFAULT 0;
-
-CREATE OR REPLACE VIEW vue_interets_percus AS
-SELECT vm.*, sp.delai, sp.date,
-       DATE_ADD(sp.date, INTERVAL sp.delai MONTH) AS date_debut_percu
-FROM vue_interets_mensuels vm
-JOIN status_pret sp ON sp.id_pret = vm.pret_id
-WHERE DATE_ADD(sp.date, INTERVAL sp.delai MONTH) <= STR_TO_DATE(CONCAT(vm.annee, '-', LPAD(vm.mois,2,'0'), '-01'), '%Y-%m-%d');
-
-CREATE OR REPLACE VIEW vue_interets_mensuels AS
-SELECT 
-    p.id as pret_id,
-    c.nom,
-    c.prenom,
-    p.montant as capital_emprunte,
-    tp.taux as taux_annuel,
-    (tp.taux / 12) as taux_mensuel,
-    p.duree,
-    sp.delai,
-    -- Génération des mois de 1 à (delai + duree)
-    mois.numero_mois,
-    -- Date du mois
-    DATE_ADD(sp.date, INTERVAL (mois.numero_mois - 1) MONTH) as date_mois,
-    YEAR(DATE_ADD(sp.date, INTERVAL (mois.numero_mois - 1) MONTH)) as annee,
-    MONTH(DATE_ADD(sp.date, INTERVAL (mois.numero_mois - 1) MONTH)) as mois,
-    -- Capital restant
-    CASE
-        WHEN mois.numero_mois <= sp.delai THEN
-            -- Capitalisation pendant le différé
-            ROUND(p.montant * POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - 1), 2)
-        ELSE
-            -- Amortissement classique après le différé
-            ROUND(
-                p.montant * POWER(1 + (tp.taux / 12 / 100), sp.delai) * 
-                POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - sp.delai - 1) -
-                (
-                    p.montant * POWER(1 + (tp.taux / 12 / 100), sp.delai) *
-                    (
-                        (tp.taux / 12 / 100) / 
-                        (1 - POWER(1 + (tp.taux / 12 / 100), -(p.duree)))
-                    )
-                ) * 
-                (
-                    (POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - sp.delai - 1) - 1) / 
-                    (tp.taux / 12 / 100)
-                ), 2
-            )
-    END as capital_restant,
-    -- Intérêts du mois
-    CASE
-        WHEN mois.numero_mois <= sp.delai THEN 0
-        ELSE
-            ROUND(
-                (
-                    p.montant * POWER(1 + (tp.taux / 12 / 100), sp.delai) * 
-                    POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - sp.delai - 1) -
-                    (
-                        p.montant * POWER(1 + (tp.taux / 12 / 100), sp.delai) *
-                        (
-                            (tp.taux / 12 / 100) / 
-                            (1 - POWER(1 + (tp.taux / 12 / 100), -(p.duree)))
-                        )
-                    ) * 
-                    (
-                        (POWER(1 + (tp.taux / 12 / 100), mois.numero_mois - sp.delai - 1) - 1) / 
-                        (tp.taux / 12 / 100)
-                    )
-                ) * (tp.taux / 12 / 100), 2
-            )
-    END as interets_mois
-FROM pret p
-JOIN client c ON p.client_id = c.id
-JOIN type_pret tp ON tp.id = p.type_pret_id
-JOIN status_pret sp ON sp.id_pret = p.id
-JOIN (
-    SELECT 1 as numero_mois UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6
-    UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12
-    UNION SELECT 13 UNION SELECT 14 UNION SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18
-    UNION SELECT 19 UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24
-    -- ... jusqu'à la durée max possible
-) mois ON mois.numero_mois <= (sp.delai + p.duree);
