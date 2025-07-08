@@ -659,7 +659,7 @@
                     </a>
                     <a href="#" class="nav-item" data-section="stats" onclick="window.location.href='?section=stats'; return false;">
                         <span class="nav-icon">📊</span>
-                        <span class="nav-text">Statistiques</span>
+                        <span class="nav-text">Montant total dispo</span>
                     </a>
                     <a href="#" class="nav-item" data-section="add-fund" onclick="window.location.href='?section=add-fund'; return false;">
                         <span class="nav-icon">💳</span>
