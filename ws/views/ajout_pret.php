@@ -45,13 +45,13 @@
             margin-bottom: 1.5rem;
         }
 
-        h3 {
+        <<<<<<< HEAD h3 {
             font-size: 1.25rem;
             color: #1a202c;
             margin-bottom: 1rem;
         }
 
-        form {
+        =======>>>>>>>5cc037176d39612dc267c5816f9d16840fe4ad30 form {
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -157,7 +157,7 @@
             background-color: #f7fafc;
         }
 
-        .simulations-list {
+        <<<<<<< HEAD .simulations-list {
             max-height: 500px;
             overflow-y: auto;
         }
@@ -320,7 +320,7 @@
             }
         }
 
-        @media (max-width: 600px) {
+        =======>>>>>>>5cc037176d39612dc267c5816f9d16840fe4ad30 @media (max-width: 600px) {
             .container {
                 padding: 1rem;
             }
@@ -409,7 +409,7 @@
         <div class="simulations-container">
             <div class="container">
                 <h3>Simulations récentes</h3>
-                
+
                 <!-- Filtres -->
                 <div class="filters">
                     <select id="filter-client" class="filter-input">
@@ -425,7 +425,7 @@
                 <div id="simulations-loading" class="loading-simulations" style="display: none;">
                     Chargement des simulations...
                 </div>
-                
+
                 <div class="simulations-list" id="simulations-list">
                     <!-- Les simulations seront chargées ici -->
                 </div>
@@ -444,6 +444,7 @@
     </div>
 
     <script>
+        << << << < HEAD
         window.apiBase = window.apiBase || "http://localhost/final/ws";
         let typePretTauxMap = {};
         let allSimulations = [];
@@ -466,7 +467,7 @@
                     allClients = data;
                     const select = document.getElementById('client_id');
                     const filterSelect = document.getElementById('filter-client');
-                    
+
                     data.forEach(client => {
                         // Formulaire
                         const option = document.createElement('option');
@@ -521,11 +522,11 @@
         // Charger les simulations
         function chargerSimulations() {
             document.getElementById('simulations-loading').style.display = 'block';
-            
+
             // Réinitialiser les sélections
             selectedSimulations = [];
             updateCompareSection();
-            
+
             fetch(window.apiBase + '/api/simulations')
                 .then(response => response.json())
                 .then(data => {
@@ -534,13 +535,13 @@
                         afficherSimulations(allSimulations);
                     } else {
                         console.error('Erreur:', data.error);
-                        document.getElementById('simulations-list').innerHTML = 
+                        document.getElementById('simulations-list').innerHTML =
                             '<div class="no-simulations">Erreur lors du chargement des simulations</div>';
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    document.getElementById('simulations-list').innerHTML = 
+                    document.getElementById('simulations-list').innerHTML =
                         '<div class="no-simulations">Erreur de connexion</div>';
                 })
                 .finally(() => {
@@ -551,14 +552,14 @@
         // Afficher les simulations
         function afficherSimulations(simulations) {
             const container = document.getElementById('simulations-list');
-            
+
             if (simulations.length === 0) {
                 container.innerHTML = '<div class="no-simulations">Aucune simulation trouvée</div>';
                 return;
             }
 
             container.innerHTML = '';
-            
+
             simulations.forEach(simulation => {
                 const dateFormatee = new Date(simulation.date_simulation).toLocaleDateString('fr-FR', {
                     day: '2-digit',
@@ -610,7 +611,7 @@
                         <button class="btn-sm btn-danger" onclick="supprimerSimulation(${simulation.id})">Supprimer</button>
                     </div>
                 `;
-                
+
                 container.appendChild(simulationElement);
             });
         }
@@ -625,7 +626,7 @@
                 const matchClient = !clientId || simulation.client_id == clientId;
                 const matchMontantMin = simulation.montant >= montantMin;
                 const matchMontantMax = simulation.montant <= montantMax;
-                
+
                 return matchClient && matchMontantMin && matchMontantMax;
             });
 
@@ -644,13 +645,13 @@
         function toggleSimulationSelection(simulationId) {
             const checkbox = document.getElementById(`checkbox-${simulationId}`);
             const index = selectedSimulations.indexOf(simulationId);
-            
+
             if (checkbox.checked && index === -1) {
                 selectedSimulations.push(simulationId);
             } else if (!checkbox.checked && index !== -1) {
                 selectedSimulations.splice(index, 1);
             }
-            
+
             updateCompareSection();
         }
 
@@ -659,7 +660,7 @@
             const compareSection = document.getElementById('compare-section');
             const selectionInfo = document.getElementById('selection-info');
             const compareButton = document.getElementById('compare-button');
-            
+
             if (selectedSimulations.length === 0) {
                 compareSection.style.display = 'none';
                 selectionInfo.textContent = 'Aucune simulation sélectionnée';
@@ -684,18 +685,18 @@
                 alert('Veuillez sélectionner au moins 2 simulations pour effectuer une comparaison.');
                 return;
             }
-            
+
             // Préparer les données pour la page de comparaison
             const simulationsAComparer = selectedSimulations.map(id => {
                 return allSimulations.find(sim => sim.id == id);
             }).filter(sim => sim !== undefined);
-            
+
             // Créer une forme pour envoyer les données via POST
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = window.apiBase + '/comparaison-simulations';
             form.style.display = 'none';
-            
+
             // Ajouter les données des simulations
             simulationsAComparer.forEach((simulation, index) => {
                 Object.keys(simulation).forEach(key => {
@@ -706,14 +707,14 @@
                     form.appendChild(input);
                 });
             });
-            
+
             // Ajouter le nombre de simulations
             const countInput = document.createElement('input');
             countInput.type = 'hidden';
             countInput.name = 'count';
             countInput.value = simulationsAComparer.length;
             form.appendChild(countInput);
-            
+
             document.body.appendChild(form);
             form.submit();
             document.body.removeChild(form);
@@ -741,27 +742,27 @@
         function supprimerSimulation(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette simulation ?')) {
                 fetch(`${window.apiBase}/api/simulations?id=${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        chargerSimulations(); // Recharger la liste
-                        // Retirer la simulation de la liste sélectionnée si elle y était
-                        const index = selectedSimulations.indexOf(id);
-                        if (index !== -1) {
-                            selectedSimulations.splice(index, 1);
-                            updateCompareSection();
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            chargerSimulations(); // Recharger la liste
+                            // Retirer la simulation de la liste sélectionnée si elle y était
+                            const index = selectedSimulations.indexOf(id);
+                            if (index !== -1) {
+                                selectedSimulations.splice(index, 1);
+                                updateCompareSection();
+                            }
+                            alert('Simulation supprimée avec succès');
+                        } else {
+                            alert('Erreur lors de la suppression: ' + data.error);
                         }
-                        alert('Simulation supprimée avec succès');
-                    } else {
-                        alert('Erreur lors de la suppression: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Erreur de connexion lors de la suppression');
-                });
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Erreur de connexion lors de la suppression');
+                    });
             }
         }
 
@@ -785,117 +786,216 @@
 
         // Mettre à jour le taux affiché lors du changement de type de prêt
         document.getElementById('type_pret_id').addEventListener('change', function() {
-            updateTauxDisplay(this.value);
-        });
+                    updateTauxDisplay(this.value); ===
+                    === =
+                    window.apiBase = window.apiBase || "http://localhost/final/ws";
 
-        // Soumission du formulaire
-        document.getElementById('pretForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const hasAssurance = document.getElementById('has_assurance').checked;
-            if (hasAssurance) {
-                formData.set('assurance', document.getElementById('assurance').value || 0);
-            } else {
-                formData.set('assurance', 0);
-            }
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-            // Ajoute le nom du type de prêt pour status_pret
-            const typePretSelect = document.getElementById('type_pret_id');
-            data.nom_type_pret = typePretSelect.options[typePretSelect.selectedIndex].text.split(' (')[0];
-            fetch(window.apiBase + '/api/prets', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(async res => {
-                    let text = await res.text();
-                    let dataRes;
-                    try {
-                        dataRes = JSON.parse(text);
-                    } catch (e) {
-                        document.getElementById('message').textContent = 'Réponse non JSON: ' + text;
-                        document.getElementById('message').className = 'error';
-                        return;
-                    }                        if (dataRes.error) {
-                            document.getElementById('message').textContent = (dataRes.error || 'Erreur') + ' | Debug: ' + JSON.stringify(dataRes);
-                            document.getElementById('message').className = 'error';
+                    // Charger la liste des clients
+                    fetch(window.apiBase + '/api/clients')
+                        .then(res => res.json())
+                        .then(data => {
+                            const select = document.getElementById('client_id');
+                            data.forEach(e => {
+                                const option = document.createElement('option');
+                                option.value = e.id;
+                                option.textContent = e.nom + ' ' + e.prenom;
+                                select.appendChild(option);
+                            }); >>>
+                            >>> > 5 cc037176d39612dc267c5816f9d16840fe4ad30
+                        });
+
+                    // Charger la liste des types de remboursement
+                    fetch(window.apiBase + '/api/type_remboursements')
+                        .then(res => res.json())
+                        .then(data => {
+                            const select = document.getElementById('type_remboursement_id');
+                            data.forEach(e => {
+                                const option = document.createElement('option');
+                                option.value = e.id;
+                                option.textContent = e.nom;
+                                select.appendChild(option);
+                            }); <<
+                            << << < HEAD
+                            // Ajoute le nom du type de prêt pour status_pret
+                            const typePretSelect = document.getElementById('type_pret_id');
+                            data.nom_type_pret = typePretSelect.options[typePretSelect.selectedIndex].text.split(' (')[0];
+                            fetch(window.apiBase + '/api/prets', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(data)
+                                })
+                                .then(async res => {
+                                    let text = await res.text();
+                                    let dataRes;
+                                    try {
+                                        dataRes = JSON.parse(text);
+                                    } catch (e) {
+                                        document.getElementById('message').textContent = 'Réponse non JSON: ' + text;
+                                        document.getElementById('message').className = 'error';
+                                        return;
+                                    }
+                                    if (dataRes.error) {
+                                        document.getElementById('message').textContent = (dataRes.error || 'Erreur') + ' | Debug: ' + JSON.stringify(dataRes);
+                                        document.getElementById('message').className = 'error';
+                                    } else {
+                                        document.getElementById('message').textContent = (dataRes.message || 'Ajout réussi') + ' | Debug: ' + JSON.stringify(dataRes);
+                                        document.getElementById('message').className = 'success';
+                                        if (dataRes.id) {
+                                            document.getElementById('pretForm').reset();
+                                            chargerSimulations(); // Recharger les simulations après ajout d'un prêt
+                                        }
+                                    }
+                                })
+                                .catch((err) => {
+                                    document.getElementById('message').textContent = 'Erreur lors de l\'ajout: ' + err;
+                                    document.getElementById('message').className = 'error';
+                                }); ===
+                            === = >>>
+                            >>> > 5 cc037176d39612dc267c5816f9d16840fe4ad30
+                        });
+
+                    // Stockage des taux par type de prêt
+                    let typePretTauxMap = {};
+
+                    // Charger la liste des types de prêt et remplir le mapping id => taux
+                    fetch(window.apiBase + '/api/type_prets')
+                        .then(res => res.json())
+                        .then(data => {
+                            const select = document.getElementById('type_pret_id');
+                            data.forEach(e => {
+                                const option = document.createElement('option');
+                                option.value = e.id;
+                                option.textContent = `${e.nom} (${e.taux}%)`;
+                                select.appendChild(option);
+                                typePretTauxMap[e.id] = parseFloat(e.taux) / 12 / 100;
+                            });
+                            if (select.value) updateTauxDisplay(select.value);
+                        });
+
+                    // Met à jour l'affichage du taux d'intérêt mensuel
+                    function updateTauxDisplay(typePretId) {
+                        const tauxMensuel = typePretTauxMap[typePretId];
+                        const tauxDiv = document.getElementById('taux-display');
+                        if (typeof tauxMensuel === 'number' && !isNaN(tauxMensuel)) {
+                            tauxDiv.textContent = `Taux d'intérêt mensuel : ${(tauxMensuel * 100).toFixed(2)} %`;
                         } else {
-                            document.getElementById('message').textContent = (dataRes.message || 'Ajout réussi') + ' | Debug: ' + JSON.stringify(dataRes);
-                            document.getElementById('message').className = 'success';
-                            if (dataRes.id) {
-                                document.getElementById('pretForm').reset();
-                                chargerSimulations(); // Recharger les simulations après ajout d'un prêt
-                            }
+                            tauxDiv.textContent = '';
                         }
-                })
-                .catch((err) => {
-                    document.getElementById('message').textContent = 'Erreur lors de l\'ajout: ' + err;
-                    document.getElementById('message').className = 'error';
-                });
-        });
+                    }
 
-        // Utilitaires de calcul
-        function calculerMensualite(capital, tauxMensuel, duree) {
-            if (tauxMensuel === 0) return capital / duree;
-            return capital * (tauxMensuel / (1 - Math.pow(1 + tauxMensuel, -duree)));
-        }
+                    // Mettre à jour le taux affiché lors du changement de type de prêt
+                    document.getElementById('type_pret_id').addEventListener('change', function() {
+                        updateTauxDisplay(this.value);
+                    });
 
-        function calculerPrimeAssurance(capital, tauxAssuranceAnnuel) {
-            return (capital * tauxAssuranceAnnuel) / 12;
-        }
+                    // Soumission du formulaire
+                    document.getElementById('pretForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        const formData = new FormData(this);
+                        const hasAssurance = document.getElementById('has_assurance').checked;
+                        if (hasAssurance) {
+                            formData.set('assurance', document.getElementById('assurance').value || 0);
+                        } else {
+                            formData.set('assurance', 0);
+                        }
+                        const data = {};
+                        formData.forEach((value, key) => {
+                            data[key] = value;
+                        });
+                        // Ajoute le nom du type de prêt pour status_pret
+                        const typePretSelect = document.getElementById('type_pret_id');
+                        data.nom_type_pret = typePretSelect.options[typePretSelect.selectedIndex].text.split(' (')[0];
+                        fetch(window.apiBase + '/api/prets', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(data)
+                            })
+                            .then(async res => {
+                                let text = await res.text();
+                                let dataRes;
+                                try {
+                                    dataRes = JSON.parse(text);
+                                } catch (e) {
+                                    document.getElementById('message').textContent = 'Réponse non JSON: ' + text;
+                                    document.getElementById('message').className = 'error';
+                                    return;
+                                }
+                                if (dataRes.error) {
+                                    document.getElementById('message').textContent = (dataRes.error || 'Erreur') + ' | Debug: ' + JSON.stringify(dataRes);
+                                    document.getElementById('message').className = 'error';
+                                } else {
+                                    document.getElementById('message').textContent = (dataRes.message || 'Ajout réussi') + ' | Debug: ' + JSON.stringify(dataRes);
+                                    document.getElementById('message').className = 'success';
+                                    if (dataRes.id) document.getElementById('pretForm').reset();
+                                }
+                            })
+                            .catch((err) => {
+                                document.getElementById('message').textContent = 'Erreur lors de l\'ajout: ' + err;
+                                document.getElementById('message').className = 'error';
+                            });
+                    });
 
-        function genererAmortissement(capital, tauxMensuel, duree, mensualite, primeAssurance, delaiPremier) {
-            let tableau = [];
-            let capitalRestant = capital;
-            for (let mois = 1; mois <= delaiPremier; mois++) {
-                let interets = capitalRestant * tauxMensuel;
-                capitalRestant += interets;
-                tableau.push({
-                    mois,
-                    capitalRestant: Math.max(capitalRestant, 0),
-                    interets,
-                    amortissement: 0,
-                    mensualite: 0,
-                    assurance: primeAssurance,
-                    montantTotal: primeAssurance > 0 ? primeAssurance : 0
-                });
-            }
-            for (let mois = delaiPremier + 1; mois <= duree + delaiPremier; mois++) {
-                let interets = capitalRestant * tauxMensuel;
-                let amortissement = mensualite - interets;
-                let assurance = primeAssurance;
-                let montantTotal = mensualite + (assurance || 0);
-                tableau.push({
-                    mois,
-                    capitalRestant: Math.max(capitalRestant, 0),
-                    interets,
-                    amortissement,
-                    mensualite,
-                    assurance,
-                    montantTotal
-                });
-                capitalRestant -= amortissement;
-                if (capitalRestant < 0) capitalRestant = 0;
-            }
-            return tableau;
-        }
+                    // Utilitaires de calcul
+                    function calculerMensualite(capital, tauxMensuel, duree) {
+                        if (tauxMensuel === 0) return capital / duree;
+                        return capital * (tauxMensuel / (1 - Math.pow(1 + tauxMensuel, -duree)));
+                    }
 
-        function afficherSimulation(resultDiv, donnees, tableau, delaiPremier) {
-            const {
-                capital,
-                tauxMensuel,
-                duree,
-                mensualite,
-                primeAssurance,
-                coutTotalAssurance
-            } = donnees;
+                    function calculerPrimeAssurance(capital, tauxAssuranceAnnuel) {
+                        return (capital * tauxAssuranceAnnuel) / 12;
+                    }
 
-            let html = `
+                    function genererAmortissement(capital, tauxMensuel, duree, mensualite, primeAssurance, delaiPremier) {
+                        let tableau = [];
+                        let capitalRestant = capital;
+                        for (let mois = 1; mois <= delaiPremier; mois++) {
+                            let interets = capitalRestant * tauxMensuel;
+                            capitalRestant += interets;
+                            tableau.push({
+                                mois,
+                                capitalRestant: Math.max(capitalRestant, 0),
+                                interets,
+                                amortissement: 0,
+                                mensualite: 0,
+                                assurance: primeAssurance,
+                                montantTotal: primeAssurance > 0 ? primeAssurance : 0
+                            });
+                        }
+                        for (let mois = delaiPremier + 1; mois <= duree + delaiPremier; mois++) {
+                            let interets = capitalRestant * tauxMensuel;
+                            let amortissement = mensualite - interets;
+                            let assurance = primeAssurance;
+                            let montantTotal = mensualite + (assurance || 0);
+                            tableau.push({
+                                mois,
+                                capitalRestant: Math.max(capitalRestant, 0),
+                                interets,
+                                amortissement,
+                                mensualite,
+                                assurance,
+                                montantTotal
+                            });
+                            capitalRestant -= amortissement;
+                            if (capitalRestant < 0) capitalRestant = 0;
+                        }
+                        return tableau;
+                    }
+
+                    function afficherSimulation(resultDiv, donnees, tableau, delaiPremier) {
+                        const {
+                            capital,
+                            tauxMensuel,
+                            duree,
+                            mensualite,
+                            primeAssurance,
+                            coutTotalAssurance
+                        } = donnees;
+
+                        let html = `
             <h3 style="font-size: 1.125rem; font-weight: 600; color: #2d3748; margin-bottom: 1rem;">Simulation de prêt</h3>
             <table>
                 <tr>
@@ -929,8 +1029,8 @@
                 </thead>
                 <tbody>
         `;
-            tableau.forEach(ligne => {
-                html += `<tr>
+                        tableau.forEach(ligne => {
+                            html += `<tr>
                 <td>${ligne.mois}</td>
                 <td>${ligne.capitalRestant.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>
                 <td>${ligne.interets.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>
@@ -941,160 +1041,225 @@
                     <td>${ligne.montantTotal.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>
                 ` : ''}
             </tr>`;
-            });
-            html += `</tbody></table></div>`;
-            resultDiv.innerHTML = html;
-        }
-
-        // Gestionnaire du bouton "Simuler"
-        document.getElementById('simulateur-btn').addEventListener('click', function() {
-            document.getElementById('error-message').textContent = '';
-            const capital = parseFloat(document.getElementById('montant').value);
-            const duree = parseInt(document.getElementById('duree').value, 10);
-            const typePretId = document.getElementById('type_pret_id').value;
-            const clientId = document.getElementById('client_id').value;
-            const tauxMensuel = typePretTauxMap[typePretId];
-            const hasAssurance = document.getElementById('has_assurance').checked;
-            const assuranceAnnuel = hasAssurance ? parseFloat(document.getElementById('assurance').value.replace(',', '.')) / 100 : 0;
-            const delaiPremier = parseInt(document.getElementById('delai_premier').value, 10) || 0;
-
-            const resultDiv = document.getElementById('simulation-result');
-            resultDiv.innerHTML = '';
-
-            // Validation
-            if (!clientId) {
-                document.getElementById('error-message').textContent = 'Veuillez sélectionner un client.';
-                return;
-            }
-            if (isNaN(capital) || capital <= 0) {
-                document.getElementById('error-message').textContent = 'Veuillez saisir un capital valide.';
-                return;
-            }
-            if (isNaN(duree) || duree <= 0) {
-                document.getElementById('error-message').textContent = 'Veuillez saisir une durée valide.';
-                return;
-            }
-            if (!typePretId || typeof tauxMensuel !== 'number' || isNaN(tauxMensuel) || tauxMensuel < 0) {
-                document.getElementById('error-message').textContent = 'Veuillez sélectionner un type de prêt.';
-                return;
-            }
-            if (hasAssurance && (isNaN(assuranceAnnuel) || assuranceAnnuel < 0)) {
-                document.getElementById('error-message').textContent = 'Veuillez saisir un taux d\'assurance valide.';
-                return;
-            }
-            if (isNaN(delaiPremier) || delaiPremier < 0) {
-                document.getElementById('error-message').textContent = 'Veuillez saisir un délai de 1er remboursement valide.';
-                return;
-            }
-
-            const mensualite = calculerMensualite(
-                capital * Math.pow(1 + tauxMensuel, delaiPremier),
-                tauxMensuel,
-                duree
-            );
-            const primeAssurance = assuranceAnnuel > 0 ? calculerPrimeAssurance(capital, assuranceAnnuel) : 0;
-            const coutTotalAssurance = primeAssurance * (duree + delaiPremier);
-
-            const tableau = genererAmortissement(
-                capital,
-                tauxMensuel,
-                duree,
-                mensualite,
-                primeAssurance,
-                delaiPremier
-            );
-
-            // Calculer le total des intérêts
-            const totalInterets = tableau.reduce((sum, ligne) => sum + ligne.interets, 0);
-
-            // Afficher la simulation
-            afficherSimulation(resultDiv, {
-                capital,
-                tauxMensuel,
-                duree,
-                mensualite,
-                primeAssurance,
-                coutTotalAssurance
-            }, tableau, delaiPremier);
-
-            // Sauvegarder la simulation dans la base de données
-            const simulationData = {
-                client_id: parseInt(clientId),
-                montant: capital,
-                duree: duree,
-                type_pret_id: parseInt(typePretId),
-                taux_mensuel: tauxMensuel,
-                delai_premier: delaiPremier,
-                assurance: assuranceAnnuel * 100, // Convertir en pourcentage
-                mensualite: mensualite,
-                total_interets: totalInterets,
-                cout_total_assurance: coutTotalAssurance
-            };
-
-            // Envoyer à l'API
-            fetch(window.apiBase + '/api/simulations', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(simulationData)
-                })
-                .then(response => {
-                    console.log('Statut de la réponse:', response.status);
-                    console.log('URL appelée:', window.apiBase + '/api/simulations');
-
-                    // Vérifier si la réponse est OK
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        });
+                        html += `</tbody></table></div>`;
+                        resultDiv.innerHTML = html;
                     }
 
-                    return response.text(); // Récupérer en text d'abord pour déboguer
-                })
-                .then(text => {
-                    console.log('Réponse brute:', text);
+                    // Gestionnaire du bouton "Simuler"
+                    document.getElementById('simulateur-btn').addEventListener('click', function() {
+                        document.getElementById('error-message').textContent = '';
+                        const capital = parseFloat(document.getElementById('montant').value);
+                        const duree = parseInt(document.getElementById('duree').value, 10);
+                        const typePretId = document.getElementById('type_pret_id').value;
+                        const tauxMensuel = typePretTauxMap[typePretId];
+                        const hasAssurance = document.getElementById('has_assurance').checked;
+                        const assuranceAnnuel = hasAssurance ? parseFloat(document.getElementById('assurance').value.replace(',', '.')) / 100 : 0;
+                        const delaiPremier = parseInt(document.getElementById('delai_premier').value, 10) || 0;
 
-                    try {
-                        const data = JSON.parse(text);
-                        console.log('Données parsées:', data);
+                        const resultDiv = document.getElementById('simulation-result');
+                        resultDiv.innerHTML = '';
 
-                        if (data.success) {
-                            // Ajouter un message de succès à la simulation
-                            const successMsg = document.createElement('div');
-                            successMsg.style.cssText = 'background: #d4edda; color: #155724; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
-                            successMsg.textContent = '✅ Simulation sauvegardée avec succès (ID: ' + data.simulation_id + ')';
-                            resultDiv.appendChild(successMsg);
-                            
-                            // Recharger la liste des simulations
-                            chargerSimulations();
-                        } else {
-                            console.error('Erreur lors de la sauvegarde:', data.error);
-                            // Afficher l'erreur à l'utilisateur
-                            const errorMsg = document.createElement('div');
-                            errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
-                            errorMsg.textContent = '❌ Erreur: ' + data.error;
-                            resultDiv.appendChild(errorMsg);
+                        if (isNaN(capital) || capital <= 0) {
+                            document.getElementById('error-message').textContent = 'Veuillez saisir un capital valide.';
+                            return;
                         }
-                    } catch (e) {
-                        console.error('Erreur de parsing JSON:', e);
-                        console.error('Texte reçu:', text);
+                        if (isNaN(duree) || duree <= 0) {
+                            document.getElementById('error-message').textContent = 'Veuillez saisir une durée valide.';
+                            return;
+                        }
+                        if (!typePretId || typeof tauxMensuel !== 'number' || isNaN(tauxMensuel) || tauxMensuel < 0) {
+                            document.getElementById('error-message').textContent = 'Veuillez sélectionner un type de prêt.';
+                            return;
+                        }
+                        if (hasAssurance && (isNaN(assuranceAnnuel) || assuranceAnnuel < 0)) {
+                            document.getElementById('error-message').textContent = 'Veuillez saisir un taux d\'assurance valide.';
+                            return;
+                        }
+                        if (isNaN(delaiPremier) || delaiPremier < 0) {
+                            document.getElementById('error-message').textContent = 'Veuillez saisir un délai de 1er remboursement valide.';
+                            return;
+                        }
 
-                        // Afficher l'erreur de parsing à l'utilisateur
-                        const errorMsg = document.createElement('div');
-                        errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
-                        errorMsg.textContent = '❌ Erreur de format de réponse. Voir la console pour plus de détails.';
-                        resultDiv.appendChild(errorMsg);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur réseau lors de la sauvegarde:', error);
+                        <<
+                        << << < HEAD
+                        // Gestionnaire du bouton "Simuler"
+                        document.getElementById('simulateur-btn').addEventListener('click', function() {
+                            document.getElementById('error-message').textContent = '';
+                            const capital = parseFloat(document.getElementById('montant').value);
+                            const duree = parseInt(document.getElementById('duree').value, 10);
+                            const typePretId = document.getElementById('type_pret_id').value;
+                            const clientId = document.getElementById('client_id').value;
+                            const tauxMensuel = typePretTauxMap[typePretId];
+                            const hasAssurance = document.getElementById('has_assurance').checked;
+                            const assuranceAnnuel = hasAssurance ? parseFloat(document.getElementById('assurance').value.replace(',', '.')) / 100 : 0;
+                            const delaiPremier = parseInt(document.getElementById('delai_premier').value, 10) || 0; ===
+                            === =
+                            const mensualite = calculerMensualite(
+                                capital * Math.pow(1 + tauxMensuel, delaiPremier),
+                                tauxMensuel,
+                                duree
+                            );
+                            const primeAssurance = assuranceAnnuel > 0 ? calculerPrimeAssurance(capital, assuranceAnnuel) : 0;
+                            const coutTotalAssurance = primeAssurance * (duree + delaiPremier); >>>
+                            >>> > 5 cc037176d39612dc267c5816f9d16840fe4ad30
 
-                    // Afficher l'erreur réseau à l'utilisateur
-                    const errorMsg = document.createElement('div');
-                    errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
-                    errorMsg.textContent = '❌ Erreur réseau: ' + error.message;
-                    resultDiv.appendChild(errorMsg);
-                });
-        });
+                            const tableau = genererAmortissement(
+                                capital,
+                                tauxMensuel,
+                                duree,
+                                mensualite,
+                                primeAssurance,
+                                delaiPremier
+                            );
+
+                            <<
+                            << << < HEAD
+                            // Validation
+                            if (!clientId) {
+                                document.getElementById('error-message').textContent = 'Veuillez sélectionner un client.';
+                                return;
+                            }
+                            if (isNaN(capital) || capital <= 0) {
+                                document.getElementById('error-message').textContent = 'Veuillez saisir un capital valide.';
+                                return;
+                            }
+                            if (isNaN(duree) || duree <= 0) {
+                                document.getElementById('error-message').textContent = 'Veuillez saisir une durée valide.';
+                                return;
+                            }
+                            if (!typePretId || typeof tauxMensuel !== 'number' || isNaN(tauxMensuel) || tauxMensuel < 0) {
+                                document.getElementById('error-message').textContent = 'Veuillez sélectionner un type de prêt.';
+                                return;
+                            }
+                            if (hasAssurance && (isNaN(assuranceAnnuel) || assuranceAnnuel < 0)) {
+                                document.getElementById('error-message').textContent = 'Veuillez saisir un taux d\'assurance valide.';
+                                return;
+                            }
+                            if (isNaN(delaiPremier) || delaiPremier < 0) {
+                                document.getElementById('error-message').textContent = 'Veuillez saisir un délai de 1er remboursement valide.';
+                                return;
+                            }
+
+                            const mensualite = calculerMensualite(
+                                capital * Math.pow(1 + tauxMensuel, delaiPremier),
+                                tauxMensuel,
+                                duree
+                            );
+                            const primeAssurance = assuranceAnnuel > 0 ? calculerPrimeAssurance(capital, assuranceAnnuel) : 0;
+                            const coutTotalAssurance = primeAssurance * (duree + delaiPremier);
+
+                            const tableau = genererAmortissement(
+                                capital,
+                                tauxMensuel,
+                                duree,
+                                mensualite,
+                                primeAssurance,
+                                delaiPremier
+                            );
+
+                            // Calculer le total des intérêts
+                            const totalInterets = tableau.reduce((sum, ligne) => sum + ligne.interets, 0);
+
+                            // Afficher la simulation
+                            afficherSimulation(resultDiv, {
+                                capital,
+                                tauxMensuel,
+                                duree,
+                                mensualite,
+                                primeAssurance,
+                                coutTotalAssurance
+                            }, tableau, delaiPremier);
+
+                            // Sauvegarder la simulation dans la base de données
+                            const simulationData = {
+                                client_id: parseInt(clientId),
+                                montant: capital,
+                                duree: duree,
+                                type_pret_id: parseInt(typePretId),
+                                taux_mensuel: tauxMensuel,
+                                delai_premier: delaiPremier,
+                                assurance: assuranceAnnuel * 100, // Convertir en pourcentage
+                                mensualite: mensualite,
+                                total_interets: totalInterets,
+                                cout_total_assurance: coutTotalAssurance
+                            };
+
+                            // Envoyer à l'API
+                            fetch(window.apiBase + '/api/simulations', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(simulationData)
+                                })
+                                .then(response => {
+                                    console.log('Statut de la réponse:', response.status);
+                                    console.log('URL appelée:', window.apiBase + '/api/simulations');
+
+                                    // Vérifier si la réponse est OK
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! status: ${response.status}`);
+                                    }
+
+                                    return response.text(); // Récupérer en text d'abord pour déboguer
+                                })
+                                .then(text => {
+                                    console.log('Réponse brute:', text);
+
+                                    try {
+                                        const data = JSON.parse(text);
+                                        console.log('Données parsées:', data);
+
+                                        if (data.success) {
+                                            // Ajouter un message de succès à la simulation
+                                            const successMsg = document.createElement('div');
+                                            successMsg.style.cssText = 'background: #d4edda; color: #155724; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
+                                            successMsg.textContent = '✅ Simulation sauvegardée avec succès (ID: ' + data.simulation_id + ')';
+                                            resultDiv.appendChild(successMsg);
+
+                                            // Recharger la liste des simulations
+                                            chargerSimulations();
+                                        } else {
+                                            console.error('Erreur lors de la sauvegarde:', data.error);
+                                            // Afficher l'erreur à l'utilisateur
+                                            const errorMsg = document.createElement('div');
+                                            errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
+                                            errorMsg.textContent = '❌ Erreur: ' + data.error;
+                                            resultDiv.appendChild(errorMsg);
+                                        }
+                                    } catch (e) {
+                                        console.error('Erreur de parsing JSON:', e);
+                                        console.error('Texte reçu:', text);
+
+                                        // Afficher l'erreur de parsing à l'utilisateur
+                                        const errorMsg = document.createElement('div');
+                                        errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
+                                        errorMsg.textContent = '❌ Erreur de format de réponse. Voir la console pour plus de détails.';
+                                        resultDiv.appendChild(errorMsg);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Erreur réseau lors de la sauvegarde:', error);
+
+                                    // Afficher l'erreur réseau à l'utilisateur
+                                    const errorMsg = document.createElement('div');
+                                    errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; text-align: center;';
+                                    errorMsg.textContent = '❌ Erreur réseau: ' + error.message;
+                                    resultDiv.appendChild(errorMsg);
+                                });
+                        }); ===
+                        === =
+                        afficherSimulation(resultDiv, {
+                            capital,
+                            tauxMensuel,
+                            duree,
+                            mensualite,
+                            primeAssurance,
+                            coutTotalAssurance
+                        }, tableau, delaiPremier);
+                    }); >>>
+                    >>> > 5 cc037176d39612dc267c5816f9d16840fe4ad30
     </script>
 </body>
 

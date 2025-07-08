@@ -1,16 +1,9 @@
-SET NAMES 'utf8mb4';
-SET CHARACTER SET utf8mb4;
-SET collation_connection = 'utf8mb4_general_ci';
-
-drop database tp_flight;
-create database tp_flight CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-use tp_flight;
-
+DELETE TABLE IF EXISTS admin , client , type_pret , client_detail , fond,fond_detail , fond_historique , type_remboursement , status_pret , pret , remboursement;
 CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100),
     mdp VARCHAR(255)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table Client
 CREATE TABLE client (
@@ -20,7 +13,7 @@ CREATE TABLE client (
     mail VARCHAR(150),
     mdp VARCHAR(255),
     date_naissance DATE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table TypePret
 CREATE TABLE type_pret (
@@ -28,7 +21,7 @@ CREATE TABLE type_pret (
     nom VARCHAR(100),
     detail TEXT,
     taux DECIMAL(12,2)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table ClientDetail
 CREATE TABLE client_detail (
@@ -38,13 +31,13 @@ CREATE TABLE client_detail (
     revenu_mensuel DECIMAL(10,2),
     charge_mensuelle DECIMAL(10,2),
     FOREIGN KEY (client_id) REFERENCES client(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table Fonds
 CREATE TABLE fond (
     id INT AUTO_INCREMENT PRIMARY KEY,
     montant DECIMAL(12,2)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table FondDetail
 CREATE TABLE fond_detail (
@@ -52,7 +45,7 @@ CREATE TABLE fond_detail (
     fond_id INT,
     detail TEXT,
     FOREIGN KEY (fond_id) REFERENCES fond(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table FondHistorique
 CREATE TABLE fond_historique (
@@ -61,14 +54,14 @@ CREATE TABLE fond_historique (
     montant DECIMAL(12,2),
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (fond_detail_id) REFERENCES fond_detail(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table TypeRemboursement
 CREATE TABLE type_remboursement (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100),
     mois INT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table StatusPret
 CREATE TABLE status_pret (
@@ -76,7 +69,7 @@ CREATE TABLE status_pret (
     id_pret INT,
     nom VARCHAR(100),
     date DATE default CURRENT_DATE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table Pret (CORRIGÉE - suppression de la référence status_pret_id qui n'existe pas)
 CREATE TABLE pret (
@@ -89,7 +82,7 @@ CREATE TABLE pret (
     FOREIGN KEY (client_id) REFERENCES client(id),
     FOREIGN KEY (type_remboursement_id) REFERENCES type_remboursement(id),
     FOREIGN KEY (type_pret_id) REFERENCES type_pret(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 -- Table Remboursement (maintenant que pret existe)
 CREATE TABLE remboursement (
@@ -99,7 +92,7 @@ CREATE TABLE remboursement (
     numero_mois INT,
     date_heure TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (pret_id) REFERENCES pret(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
 
 ALTER TABLE status_pret ADD COLUMN delai INT DEFAULT 0;
 
