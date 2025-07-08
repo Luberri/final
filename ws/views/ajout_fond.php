@@ -2,32 +2,117 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ajout de fond (admin)</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input, button { margin: 5px; padding: 5px; }
-    #fond-success, #pret-success { color: green; }
-    #fond-error, #pret-error { color: red; }
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1, h2 {
+      font-size: 1.5rem;
+      color: #1a202c;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: #3182ce;
+      color: #fff;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #2b6cb0;
+    }
+    .message {
+      text-align: center;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+    .success {
+      color: #2f855a;
+    }
+    .error {
+      color: #c53030;
+    }
+    .return-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #3182ce;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    .return-link:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Ajout de fond à l'établissement</h1>
-  <input type="number" id="fond-montant" placeholder="Montant" step="0.01" min="0">
-  <input type="text" id="fond-detail" placeholder="Détail">
-  <button onclick="ajouterFond()">Ajouter le fond</button>
-  <span id="fond-success"></span>
-  <span id="fond-error"></span>
-  <br><br>
+  <div class="container">
+    <h1>Ajout de fond à l'établissement</h1>
+    <div class="form-group">
+      <input type="number" id="fond-montant" placeholder="Montant" step="0.01" min="0">
+      <input type="text" id="fond-detail" placeholder="Détail">
+      <button onclick="ajouterFond()">Ajouter le fond</button>
+      <div class="message">
+        <span id="fond-success" class="success"></span>
+        <span id="fond-error" class="error"></span>
+      </div>
+    </div>
 
-  <h2>Création d'un type de prêt</h2>
-  <input type="text" id="pret-nom" placeholder="Nom du type de prêt">
-  <input type="text" id="pret-detail" placeholder="Détail du type de prêt">
-  <input type="number" id="pret-taux" placeholder="Taux (%)" step="0.01" min="0">
-  <button onclick="ajouterTypePret()">Créer le type de prêt</button>
-  <span id="pret-success"></span>
-  <span id="pret-error"></span>
-  <br><br>
-  <a href="index.html">Retour à l'accueil</a>
+    <h2>Création d'un type de prêt</h2>
+    <div class="form-group">
+      <input type="text" id="pret-nom" placeholder="Nom du type de prêt">
+      <input type="text" id="pret-detail" placeholder="Détail du type de prêt">
+      <input type="number" id="pret-taux" placeholder="Taux (%)" step="0.01" min="0">
+      <button onclick="ajouterTypePret()">Créer le type de prêt</button>
+      <div class="message">
+        <span id="pret-success" class="success"></span>
+        <span id="pret-error" class="error"></span>
+      </div>
+    </div>
+
+    <a href="index.html" class="return-link">Retour à l'accueil</a>
+  </div>
+
   <script>
     const apiBase = "http://localhost/final/ws";
     function ajouterFond() {
