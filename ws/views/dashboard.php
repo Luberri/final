@@ -633,10 +633,6 @@
                         <span class="nav-icon">🏠</span>
                         <span class="nav-text">Dashboard</span>
                     </a>
-                    <a href="#" class="nav-item" data-section="students" onclick="window.location.href='?section=students'; return false;">
-                        <span class="nav-icon">👥</span>
-                        <span class="nav-text">Étudiants</span>
-                    </a>
                     <a href="#" class="nav-item" data-section="loans" onclick="window.location.href='?section=loans'; return false;">
                         <span class="nav-icon">💰</span>
                         <span class="nav-text">Prêts</span>
